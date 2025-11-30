@@ -223,16 +223,39 @@
     }
 
     function addToCart(menuId, menuName, price) {
+        // Show quantity input modal
+        showQuantityModal(menuId, menuName, price);
+    }
+
+    function showQuantityModal(menuId, menuName, price) {
         const existingItem = cart.find(item => item.menu_id === menuId);
+        const currentQty = existingItem ? existingItem.quantity : 0;
         
-        if (existingItem) {
-            existingItem.quantity += 1;
+        const qty = prompt(`Masukkan jumlah untuk ${menuName}:\n\nJumlah saat ini: ${currentQty}`, currentQty > 0 ? currentQty + 1 : '1');
+        
+        if (qty === null) {
+            // User cancelled
+            return;
+        }
+        
+        const quantity = parseInt(qty);
+        
+        if (isNaN(quantity) || quantity < 1) {
+            alert('Jumlah harus lebih dari 0');
+            return;
+        }
+        
+        // Add or update item in cart
+        const existingItemIndex = cart.findIndex(item => item.menu_id === menuId);
+        
+        if (existingItemIndex >= 0) {
+            cart[existingItemIndex].quantity = quantity;
         } else {
             cart.push({
                 menu_id: menuId,
                 name: menuName,
                 price: price,
-                quantity: 1
+                quantity: quantity
             });
         }
         

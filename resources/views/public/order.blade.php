@@ -122,8 +122,32 @@
                                 <p class="text-xs text-gray-500 mb-2 line-clamp-2">{{ $detail->menu_description }}</p>
                             @endif
                             <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-600">Qty: {{ $detail->quantity }} × Rp {{ number_format($detail->unit_price, 0, ',', '.') }}</span>
-                                <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</span>
+                                <div class="flex items-center gap-2">
+                                    @if($order->status !== 'cancelled' && $order->status !== 'completed' && $order->canBeCancelled())
+                                        <button type="button" 
+                                                onclick="updateOrderItemQuantity({{ $detail->id }}, {{ $detail->quantity - 1 }})"
+                                                class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 transition-colors {{ $detail->quantity <= 1 ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                {{ $detail->quantity <= 1 ? 'disabled' : '' }}
+                                                title="Kurangi">
+                                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                            </svg>
+                                        </button>
+                                        <span class="text-xs text-gray-600 min-w-[2rem] text-center font-medium" id="qty-{{ $detail->id }}">{{ $detail->quantity }}</span>
+                                        <button type="button" 
+                                                onclick="updateOrderItemQuantity({{ $detail->id }}, {{ $detail->quantity + 1 }})"
+                                                class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                                                title="Tambah">
+                                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                            </svg>
+                                        </button>
+                                        <span class="text-xs text-gray-500 ml-1">× Rp {{ number_format($detail->unit_price, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-xs text-gray-600">Qty: {{ $detail->quantity }} × Rp {{ number_format($detail->unit_price, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
+                                <span class="text-sm font-semibold text-gray-900" id="subtotal-{{ $detail->id }}">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</span>
                             </div>
                             @if($detail->notes)
                                 <p class="text-xs text-gray-500 mt-1 italic">Note: {{ $detail->notes }}</p>
@@ -260,6 +284,11 @@
 </div>
 
 <script>
+    const orderNumber = @json($order->order_number);
+    const orderId = @json($order->id);
+    const tableIdentifier = @json($tableIdentifier ?? null);
+    const brandSlug = @json($order->brand && $order->brand->slug ? $order->brand->slug : null);
+
     async function cancelOrder(orderNumber) {
         if (!confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')) {
             return;
@@ -279,8 +308,17 @@
             
             if (data.success) {
                 alert('Pesanan berhasil dibatalkan');
-                // Reload page to show updated status
-                window.location.reload();
+                
+                // Redirect to menu with table parameter if available
+                if (brandSlug && tableIdentifier) {
+                    window.location.href = '/' + brandSlug + '?table=' + encodeURIComponent(tableIdentifier);
+                } else if (tableIdentifier) {
+                    // If no brand slug, redirect to order list
+                    window.location.href = '/orders?table=' + encodeURIComponent(tableIdentifier);
+                } else {
+                    // Fallback: reload page
+                    window.location.reload();
+                }
             } else {
                 alert('Gagal membatalkan pesanan: ' + (data.message || 'Unknown error'));
                 if (data.errors) {
@@ -290,6 +328,54 @@
         } catch (error) {
             console.error('Error:', error);
             alert('Terjadi kesalahan saat membatalkan pesanan. Silakan coba lagi.');
+        }
+    }
+
+    async function updateOrderItemQuantity(orderDetailId, newQuantity) {
+        if (newQuantity < 1) {
+            alert('Jumlah tidak boleh kurang dari 1');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/v1/orders/${orderId}/items/${orderDetailId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    quantity: newQuantity
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                // Update UI
+                const qtyElement = document.getElementById(`qty-${orderDetailId}`);
+                const subtotalElement = document.getElementById(`subtotal-${orderDetailId}`);
+                
+                if (qtyElement) {
+                    qtyElement.textContent = data.data.quantity;
+                }
+                
+                if (subtotalElement) {
+                    subtotalElement.textContent = 'Rp ' + parseInt(data.data.subtotal).toLocaleString('id-ID');
+                }
+                
+                // Reload page to update totals and order summary
+                window.location.reload();
+            } else {
+                alert('Gagal mengupdate jumlah: ' + (data.message || 'Unknown error'));
+                if (data.errors) {
+                    console.error('Validation errors:', data.errors);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat mengupdate jumlah. Silakan coba lagi.');
         }
     }
 </script>

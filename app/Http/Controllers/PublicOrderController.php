@@ -69,7 +69,12 @@ class PublicOrderController extends Controller
             ->where('order_number', $orderNumber)
             ->firstOrFail();
 
-        // If no table_id, show error page (must come from QR code)
+        // If no table identifier in query, try to get from order's table
+        if (!$tableIdentifier && $order->table) {
+            $tableIdentifier = $order->table->unique_identifier;
+        }
+
+        // If still no table_id, show error page (must come from QR code)
         if (!$tableIdentifier) {
             return view('public.table-error', [
                 'error' => 'QR code meja tidak ditemukan. Silakan scan QR code yang ada di meja restoran untuk melihat pesanan.',
