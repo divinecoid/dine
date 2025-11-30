@@ -139,6 +139,30 @@
     </div>
 </div>
 
+<!-- Alert Modal -->
+<div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full" id="alertModalIcon">
+            <!-- Icon will be set dynamically -->
+        </div>
+        
+        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2" id="alertModalTitle">
+            <!-- Title will be set dynamically -->
+        </h3>
+        
+        <p class="text-sm text-gray-600 text-center mb-6" id="alertModalMessage">
+            <!-- Message will be set dynamically -->
+        </p>
+        
+        <button type="button" 
+                onclick="closeAlertModal()"
+                class="w-full px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                id="alertModalButton">
+            OK
+        </button>
+    </div>
+</div>
+
 <!-- Close Order Confirmation Modal -->
 <div id="closeOrderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
@@ -207,14 +231,15 @@
             const data = await response.json();
             
             if (data.success) {
-                alert(data.message || 'Pesanan berhasil ditutup');
-                window.location.reload();
+                showAlert('success', 'Berhasil', data.message || 'Pesanan berhasil ditutup', function() {
+                    window.location.reload();
+                });
             } else {
-                alert('Gagal menutup pesanan: ' + (data.message || 'Unknown error'));
+                showAlert('error', 'Gagal', 'Gagal menutup pesanan: ' + (data.message || 'Unknown error'));
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat menutup pesanan. Silakan coba lagi.');
+            showAlert('error', 'Error', 'Terjadi kesalahan saat menutup pesanan. Silakan coba lagi.');
         }
     }
 

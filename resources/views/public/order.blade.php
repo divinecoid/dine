@@ -250,12 +250,12 @@
         @endif
 
         <!-- Action Buttons -->
-        <div class="flex gap-3">
+        <div class="flex flex-col md:flex-row gap-3">
             @if($order->status !== 'cancelled' && $order->status !== 'completed')
                 @if($order->canBeCancelled())
                     <button type="button" 
                             onclick="cancelOrder('{{ $order->order_number }}')"
-                            class="flex-1 px-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
+                            class="w-full md:flex-1 px-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
                         Batalkan Pesanan
                     </button>
                 @endif
@@ -263,22 +263,87 @@
             
             @if(isset($tableIdentifier))
                 <a href="{{ route('public.orders.index', ['table' => $tableIdentifier]) }}" 
-                   class="flex-1 px-4 py-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors text-center">
+                   class="w-full md:flex-1 px-4 py-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors text-center">
                     Kembali ke Daftar Pesanan
                 </a>
             @endif
             
             @if($order->brand && $order->brand->slug && isset($tableIdentifier))
                 <a href="{{ route('public.menu', ['brandSlug' => $order->brand->slug, 'table' => $tableIdentifier]) }}" 
-                   class="flex-1 px-4 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-center">
+                   class="w-full md:flex-1 px-4 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-center">
                     Kembali ke Menu
                 </a>
             @elseif(!isset($tableIdentifier))
                 <a href="/" 
-                   class="flex-1 px-4 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-center">
+                   class="w-full md:flex-1 px-4 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-center">
                     Kembali ke Beranda
                 </a>
             @endif
+        </div>
+    </div>
+</div>
+
+<!-- Alert Modal -->
+<div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full" id="alertModalIcon">
+            <!-- Icon will be set dynamically -->
+        </div>
+        
+        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2" id="alertModalTitle">
+            <!-- Title will be set dynamically -->
+        </h3>
+        
+        <p class="text-sm text-gray-600 text-center mb-6" id="alertModalMessage">
+            <!-- Message will be set dynamically -->
+        </p>
+        
+        <button type="button" 
+                onclick="closeAlertModal()"
+                class="w-full px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                id="alertModalButton">
+            OK
+        </button>
+    </div>
+</div>
+
+<!-- Cancel Order Confirmation Modal -->
+<div id="cancelOrderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        
+        <h3 class="text-xl font-bold text-gray-900 text-center mb-3">
+            Batalkan Pesanan?
+        </h3>
+        
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+            <p class="text-sm text-yellow-800 font-semibold mb-2">⚠️ Peringatan:</p>
+            <ul class="text-sm text-yellow-700 space-y-1 list-disc list-inside">
+                <li>Pesanan yang dibatalkan tidak dapat dikembalikan</li>
+                <li>Pesanan akan dihapus dari daftar pesanan Anda</li>
+                <li>Tindakan ini tidak dapat dibatalkan</li>
+            </ul>
+        </div>
+        
+        <p class="text-sm text-gray-600 text-center mb-6">
+            Apakah Anda yakin ingin membatalkan pesanan <span class="font-semibold text-gray-900">{{ $order->order_number }}</span>?
+        </p>
+        
+        <div class="flex gap-3">
+            <button type="button" 
+                    onclick="closeCancelOrderModal()"
+                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                Batal
+            </button>
+            <button type="button" 
+                    onclick="confirmCancelOrder()"
+                    class="flex-1 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
+                Ya, Batalkan Pesanan
+            </button>
         </div>
     </div>
 </div>
@@ -289,10 +354,21 @@
     const tableIdentifier = @json($tableIdentifier ?? null);
     const brandSlug = @json($order->brand && $order->brand->slug ? $order->brand->slug : null);
 
-    async function cancelOrder(orderNumber) {
-        if (!confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')) {
-            return;
-        }
+    function cancelOrder(orderNumber) {
+        // Show cancel order confirmation modal
+        showCancelOrderModal();
+    }
+
+    function showCancelOrderModal() {
+        document.getElementById('cancelOrderModal').classList.remove('hidden');
+    }
+
+    function closeCancelOrderModal() {
+        document.getElementById('cancelOrderModal').classList.add('hidden');
+    }
+
+    async function confirmCancelOrder() {
+        closeCancelOrderModal();
 
         try {
             const response = await fetch(`/api/v1/orders/${orderNumber}/cancel`, {
@@ -307,33 +383,40 @@
             const data = await response.json();
             
             if (data.success) {
-                alert('Pesanan berhasil dibatalkan');
-                
-                // Redirect to menu with table parameter if available
-                if (brandSlug && tableIdentifier) {
-                    window.location.href = '/' + brandSlug + '?table=' + encodeURIComponent(tableIdentifier);
-                } else if (tableIdentifier) {
-                    // If no brand slug, redirect to order list
-                    window.location.href = '/orders?table=' + encodeURIComponent(tableIdentifier);
-                } else {
-                    // Fallback: reload page
-                    window.location.reload();
-                }
+                showAlert('success', 'Berhasil', 'Pesanan berhasil dibatalkan', function() {
+                    // Redirect to menu with table parameter if available
+                    if (brandSlug && tableIdentifier) {
+                        window.location.href = '/' + brandSlug + '?table=' + encodeURIComponent(tableIdentifier);
+                    } else if (tableIdentifier) {
+                        // If no brand slug, redirect to order list
+                        window.location.href = '/orders?table=' + encodeURIComponent(tableIdentifier);
+                    } else {
+                        // Fallback: reload page
+                        window.location.reload();
+                    }
+                });
             } else {
-                alert('Gagal membatalkan pesanan: ' + (data.message || 'Unknown error'));
+                showAlert('error', 'Gagal', 'Gagal membatalkan pesanan: ' + (data.message || 'Unknown error'));
                 if (data.errors) {
                     console.error('Validation errors:', data.errors);
                 }
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat membatalkan pesanan. Silakan coba lagi.');
+            showAlert('error', 'Error', 'Terjadi kesalahan saat membatalkan pesanan. Silakan coba lagi.');
         }
     }
 
+    // Close cancel order modal when clicking outside
+    document.getElementById('cancelOrderModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCancelOrderModal();
+        }
+    });
+
     async function updateOrderItemQuantity(orderDetailId, newQuantity) {
         if (newQuantity < 1) {
-            alert('Jumlah tidak boleh kurang dari 1');
+            showAlert('error', 'Error', 'Jumlah tidak boleh kurang dari 1');
             return;
         }
 
@@ -368,16 +451,91 @@
                 // Reload page to update totals and order summary
                 window.location.reload();
             } else {
-                alert('Gagal mengupdate jumlah: ' + (data.message || 'Unknown error'));
+                showAlert('error', 'Gagal', 'Gagal mengupdate jumlah: ' + (data.message || 'Unknown error'));
                 if (data.errors) {
                     console.error('Validation errors:', data.errors);
                 }
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat mengupdate jumlah. Silakan coba lagi.');
+            showAlert('error', 'Error', 'Terjadi kesalahan saat mengupdate jumlah. Silakan coba lagi.');
         }
     }
+
+    // Alert Modal Functions
+    function showAlert(type, title, message, callback = null) {
+        const modal = document.getElementById('alertModal');
+        const iconContainer = document.getElementById('alertModalIcon');
+        const titleElement = document.getElementById('alertModalTitle');
+        const messageElement = document.getElementById('alertModalMessage');
+        const buttonElement = document.getElementById('alertModalButton');
+        
+        // Set icon based on type
+        let iconHtml = '';
+        let iconBgClass = '';
+        
+        if (type === 'success') {
+            iconBgClass = 'bg-green-100';
+            iconHtml = `
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            `;
+        } else if (type === 'error') {
+            iconBgClass = 'bg-red-100';
+            iconHtml = `
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            `;
+        } else {
+            iconBgClass = 'bg-blue-100';
+            iconHtml = `
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            `;
+        }
+        
+        iconContainer.className = `flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full ${iconBgClass}`;
+        iconContainer.innerHTML = iconHtml;
+        
+        titleElement.textContent = title;
+        messageElement.textContent = message;
+        
+        // Set button color based on type
+        if (type === 'success') {
+            buttonElement.className = 'w-full px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors';
+        } else if (type === 'error') {
+            buttonElement.className = 'w-full px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors';
+        } else {
+            buttonElement.className = 'w-full px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors';
+        }
+        
+        // Remove old event listener and add new one
+        const newButton = buttonElement.cloneNode(true);
+        buttonElement.parentNode.replaceChild(newButton, buttonElement);
+        
+        newButton.addEventListener('click', function() {
+            closeAlertModal();
+            if (callback && typeof callback === 'function') {
+                callback();
+            }
+        });
+        
+        modal.classList.remove('hidden');
+    }
+
+    function closeAlertModal() {
+        document.getElementById('alertModal').classList.add('hidden');
+    }
+
+    // Close alert modal when clicking outside
+    document.getElementById('alertModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAlertModal();
+        }
+    });
 </script>
 
 <style>

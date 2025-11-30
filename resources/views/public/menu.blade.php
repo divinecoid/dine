@@ -154,6 +154,117 @@
     </div>
 </div>
 
+<!-- Alert Modal -->
+<div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full" id="alertModalIcon">
+            <!-- Icon will be set dynamically -->
+        </div>
+        
+        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2" id="alertModalTitle">
+            <!-- Title will be set dynamically -->
+        </h3>
+        
+        <p class="text-sm text-gray-600 text-center mb-6" id="alertModalMessage">
+            <!-- Message will be set dynamically -->
+        </p>
+        
+        <button type="button" 
+                onclick="closeAlertModal()"
+                class="w-full px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                id="alertModalButton">
+            OK
+        </button>
+    </div>
+</div>
+
+<!-- Quantity Input Modal -->
+<div id="quantityModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2" id="quantityModalTitle">Pilih Jumlah</h3>
+        <p class="text-sm text-gray-600 mb-4" id="quantityModalMenuName"></p>
+        
+        <div class="flex items-center justify-center gap-4 mb-6">
+            <button type="button" 
+                    onclick="decreaseQuantity()"
+                    class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    id="quantityDecreaseBtn">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                </svg>
+            </button>
+            <div class="w-20 text-center">
+                <span class="text-3xl font-bold text-gray-900" id="quantityDisplay">1</span>
+            </div>
+            <button type="button" 
+                    onclick="increaseQuantity()"
+                    class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    id="quantityIncreaseBtn">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="flex gap-3">
+            <button type="button" 
+                    onclick="closeQuantityModal()"
+                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                Batal
+            </button>
+            <button type="button" 
+                    onclick="confirmQuantity()"
+                    class="flex-1 px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+                Tambah ke Keranjang
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Info Modal -->
+<div id="customerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Customer</h3>
+        
+        <div class="space-y-4 mb-6">
+            <div>
+                <label for="customerNameInput" class="block text-sm font-medium text-gray-700 mb-2">
+                    Nama <span class="text-red-500">*</span>
+                </label>
+                <input type="text" 
+                       id="customerNameInput"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                       placeholder="Masukkan nama Anda"
+                       required>
+                <p class="text-xs text-red-500 mt-1 hidden" id="customerNameError">Nama wajib diisi</p>
+            </div>
+            
+            <div>
+                <label for="customerPhoneInput" class="block text-sm font-medium text-gray-700 mb-2">
+                    No. Telepon <span class="text-gray-400 text-xs">(Opsional)</span>
+                </label>
+                <input type="tel" 
+                       id="customerPhoneInput"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                       placeholder="Masukkan nomor telepon">
+            </div>
+        </div>
+        
+        <div class="flex gap-3">
+            <button type="button" 
+                    onclick="closeCustomerModal()"
+                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                Batal
+            </button>
+            <button type="button" 
+                    onclick="confirmCustomerInfo()"
+                    class="flex-1 px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+                Lanjutkan Pesanan
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     const tableId = @json($table ? $table->id : null);
     const tableIdentifier = @json($tableIdentifier);
@@ -222,46 +333,91 @@
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     }
 
+    // Quantity Modal State
+    let currentMenuId = null;
+    let currentMenuName = null;
+    let currentMenuPrice = null;
+    let currentQuantity = 1;
+
     function addToCart(menuId, menuName, price) {
-        // Show quantity input modal
-        showQuantityModal(menuId, menuName, price);
+        // Set current menu info
+        currentMenuId = menuId;
+        currentMenuName = menuName;
+        currentMenuPrice = price;
+        
+        // Check if item already in cart
+        const existingItem = cart.find(item => item.menu_id === menuId);
+        currentQuantity = existingItem ? existingItem.quantity : 1;
+        
+        // Show quantity modal
+        showQuantityModal();
     }
 
-    function showQuantityModal(menuId, menuName, price) {
-        const existingItem = cart.find(item => item.menu_id === menuId);
-        const currentQty = existingItem ? existingItem.quantity : 0;
+    function showQuantityModal() {
+        document.getElementById('quantityModalMenuName').textContent = currentMenuName;
+        document.getElementById('quantityDisplay').textContent = currentQuantity;
         
-        const qty = prompt(`Masukkan jumlah untuk ${menuName}:\n\nJumlah saat ini: ${currentQty}`, currentQty > 0 ? currentQty + 1 : '1');
+        // Update button states
+        const decreaseBtn = document.getElementById('quantityDecreaseBtn');
+        decreaseBtn.disabled = currentQuantity <= 1;
         
-        if (qty === null) {
-            // User cancelled
-            return;
+        document.getElementById('quantityModal').classList.remove('hidden');
+    }
+
+    function closeQuantityModal() {
+        document.getElementById('quantityModal').classList.add('hidden');
+        currentMenuId = null;
+        currentMenuName = null;
+        currentMenuPrice = null;
+        currentQuantity = 1;
+    }
+
+    function increaseQuantity() {
+        currentQuantity++;
+        document.getElementById('quantityDisplay').textContent = currentQuantity;
+        
+        const decreaseBtn = document.getElementById('quantityDecreaseBtn');
+        decreaseBtn.disabled = false;
+    }
+
+    function decreaseQuantity() {
+        if (currentQuantity > 1) {
+            currentQuantity--;
+            document.getElementById('quantityDisplay').textContent = currentQuantity;
+            
+            const decreaseBtn = document.getElementById('quantityDecreaseBtn');
+            if (currentQuantity <= 1) {
+                decreaseBtn.disabled = true;
+            }
         }
-        
-        const quantity = parseInt(qty);
-        
-        if (isNaN(quantity) || quantity < 1) {
-            alert('Jumlah harus lebih dari 0');
-            return;
-        }
-        
+    }
+
+    function confirmQuantity() {
         // Add or update item in cart
-        const existingItemIndex = cart.findIndex(item => item.menu_id === menuId);
+        const existingItemIndex = cart.findIndex(item => item.menu_id === currentMenuId);
         
         if (existingItemIndex >= 0) {
-            cart[existingItemIndex].quantity = quantity;
+            cart[existingItemIndex].quantity = currentQuantity;
         } else {
             cart.push({
-                menu_id: menuId,
-                name: menuName,
-                price: price,
-                quantity: quantity
+                menu_id: currentMenuId,
+                name: currentMenuName,
+                price: currentMenuPrice,
+                quantity: currentQuantity
             });
         }
         
         saveCart();
         updateCartUI();
+        closeQuantityModal();
     }
+
+    // Close quantity modal when clicking outside
+    document.getElementById('quantityModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeQuantityModal();
+        }
+    });
 
     function removeFromCart(menuId) {
         cart = cart.filter(item => item.menu_id !== menuId);
@@ -286,16 +442,48 @@
 
     async function checkout() {
         if (cart.length === 0) {
-            alert('Keranjang kosong');
+            showAlert('error', 'Keranjang Kosong', 'Keranjang Anda masih kosong. Silakan tambahkan item terlebih dahulu.');
             return;
         }
 
-        const customerName = prompt('Masukkan nama Anda:', 'Customer') || 'Customer';
+        // Show customer info modal
+        showCustomerModal();
+    }
+
+    function showCustomerModal() {
+        // Clear inputs
+        document.getElementById('customerNameInput').value = '';
+        document.getElementById('customerPhoneInput').value = '';
+        document.getElementById('customerNameError').classList.add('hidden');
+        
+        document.getElementById('customerModal').classList.remove('hidden');
+    }
+
+    function closeCustomerModal() {
+        document.getElementById('customerModal').classList.add('hidden');
+        document.getElementById('customerNameError').classList.add('hidden');
+    }
+
+    async function confirmCustomerInfo() {
+        const customerName = document.getElementById('customerNameInput').value.trim();
+        const customerPhone = document.getElementById('customerPhoneInput').value.trim() || null;
+        
+        // Validate customer name
         if (!customerName) {
+            document.getElementById('customerNameError').classList.remove('hidden');
             return;
         }
+        
+        document.getElementById('customerNameError').classList.add('hidden');
+        
+        // Close modal
+        closeCustomerModal();
+        
+        // Proceed with checkout
+        await processCheckout(customerName, customerPhone);
+    }
 
-        const customerPhone = prompt('Masukkan nomor telepon (opsional):', '') || null;
+    async function processCheckout(customerName, customerPhone) {
 
         try {
             const response = await fetch('/api/v1/orders', {
@@ -330,16 +518,36 @@
                 const tableId = @json($tableIdentifier);
                 window.location.href = '/orders/' + data.data.order_number + (tableId ? '?table=' + encodeURIComponent(tableId) : '');
             } else {
-                alert('Gagal membuat pesanan: ' + (data.message || 'Unknown error'));
+                showAlert('error', 'Gagal', 'Gagal membuat pesanan: ' + (data.message || 'Unknown error'));
                 if (data.errors) {
                     console.error('Validation errors:', data.errors);
                 }
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
+            showAlert('error', 'Error', 'Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
         }
     }
+
+    // Close customer modal when clicking outside
+    document.getElementById('customerModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCustomerModal();
+        }
+    });
+
+    // Allow Enter key to submit customer form
+    document.getElementById('customerNameInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            confirmCustomerInfo();
+        }
+    });
+
+    document.getElementById('customerPhoneInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            confirmCustomerInfo();
+        }
+    });
 </script>
 
 <style>
