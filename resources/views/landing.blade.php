@@ -51,8 +51,8 @@
         </nav>
 
         <!-- Hero Section -->
-        <section class="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-24">
-            <div class="text-center max-w-4xl mx-auto">
+        <section class="min-h-screen flex items-center max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-24">
+            <div class="text-center max-w-4xl mx-auto w-full">
                 <h1 class="text-4xl lg:text-7xl font-bold mb-6 text-[#1b1b18] dark:text-[#EDEDEC]">
                     Restaurant Management
                     <span class="text-[#F53003]">Made Simple</span>
