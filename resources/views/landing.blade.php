@@ -95,7 +95,7 @@
 
         <!-- Features Section -->
         <section class="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
-            <div class="text-center mb-16">
+            <div class="text-center mb-20">
                 <h2 class="text-3xl lg:text-5xl font-bold mb-6 text-[#EDEDEC]">
                     Everything You Need to Run Your Restaurant
                 </h2>
@@ -104,69 +104,69 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
-                <div class="group p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-xl bg-[#F53003]/20 flex items-center justify-center mb-6 group-hover:bg-[#F53003]/30 transition-colors duration-300">
-                        <div class="text-3xl">🍽️</div>
+                <div class="group relative p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/40 hover:bg-[#1a1a18] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#F53003]/5">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F53003]/20 to-[#F53003]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <div class="text-2xl">🍽️</div>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#EDEDEC] group-hover:text-[#F53003] transition-colors duration-300">Menu Management</h3>
-                    <p class="text-base text-[#A1A09A] leading-relaxed">
+                    <p class="text-[15px] text-[#A1A09A] leading-relaxed">
                         Easily create, update, and organize your menu items with categories and pricing.
                     </p>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="group p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-xl bg-[#F53003]/20 flex items-center justify-center mb-6 group-hover:bg-[#F53003]/30 transition-colors duration-300">
-                        <div class="text-3xl">📱</div>
+                <div class="group relative p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/40 hover:bg-[#1a1a18] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#F53003]/5">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F53003]/20 to-[#F53003]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <div class="text-2xl">📱</div>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#EDEDEC] group-hover:text-[#F53003] transition-colors duration-300">QR Code Ordering</h3>
-                    <p class="text-base text-[#A1A09A] leading-relaxed">
+                    <p class="text-[15px] text-[#A1A09A] leading-relaxed">
                         Customers can scan QR codes to view menus and place orders directly from their tables.
                     </p>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="group p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-xl bg-[#F53003]/20 flex items-center justify-center mb-6 group-hover:bg-[#F53003]/30 transition-colors duration-300">
-                        <div class="text-3xl">🏪</div>
+                <div class="group relative p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/40 hover:bg-[#1a1a18] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#F53003]/5">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F53003]/20 to-[#F53003]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <div class="text-2xl">🏪</div>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#EDEDEC] group-hover:text-[#F53003] transition-colors duration-300">Multi-Store Support</h3>
-                    <p class="text-base text-[#A1A09A] leading-relaxed">
+                    <p class="text-[15px] text-[#A1A09A] leading-relaxed">
                         Manage multiple restaurant locations and brands from a single dashboard.
                     </p>
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="group p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-xl bg-[#F53003]/20 flex items-center justify-center mb-6 group-hover:bg-[#F53003]/30 transition-colors duration-300">
-                        <div class="text-3xl">🪑</div>
+                <div class="group relative p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/40 hover:bg-[#1a1a18] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#F53003]/5">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F53003]/20 to-[#F53003]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <div class="text-2xl">🪑</div>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#EDEDEC] group-hover:text-[#F53003] transition-colors duration-300">Table Management</h3>
-                    <p class="text-base text-[#A1A09A] leading-relaxed">
+                    <p class="text-[15px] text-[#A1A09A] leading-relaxed">
                         Track table availability and manage reservations efficiently.
                     </p>
                 </div>
 
                 <!-- Feature 5 -->
-                <div class="group p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-xl bg-[#F53003]/20 flex items-center justify-center mb-6 group-hover:bg-[#F53003]/30 transition-colors duration-300">
-                        <div class="text-3xl">📊</div>
+                <div class="group relative p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/40 hover:bg-[#1a1a18] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#F53003]/5">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F53003]/20 to-[#F53003]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <div class="text-2xl">📊</div>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#EDEDEC] group-hover:text-[#F53003] transition-colors duration-300">Order Tracking</h3>
-                    <p class="text-base text-[#A1A09A] leading-relaxed">
+                    <p class="text-[15px] text-[#A1A09A] leading-relaxed">
                         Monitor orders in real-time and streamline your kitchen operations.
                     </p>
                 </div>
 
                 <!-- Feature 6 -->
-                <div class="group p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-xl bg-[#F53003]/20 flex items-center justify-center mb-6 group-hover:bg-[#F53003]/30 transition-colors duration-300">
-                        <div class="text-3xl">💳</div>
+                <div class="group relative p-8 bg-[#161615] rounded-2xl border border-[#3E3E3A] hover:border-[#F53003]/40 hover:bg-[#1a1a18] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#F53003]/5">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F53003]/20 to-[#F53003]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <div class="text-2xl">💳</div>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-[#EDEDEC] group-hover:text-[#F53003] transition-colors duration-300">Payment Integration</h3>
-                    <p class="text-base text-[#A1A09A] leading-relaxed">
+                    <p class="text-[15px] text-[#A1A09A] leading-relaxed">
                         Seamless payment processing with support for multiple payment methods.
                     </p>
                 </div>
