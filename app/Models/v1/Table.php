@@ -114,5 +114,14 @@ class Table extends Model
     {
         return static::where('unique_identifier', $uniqueIdentifier)->first();
     }
+
+    /**
+     * Scope a query to filter tables accessible by a user.
+     */
+    public function scopeAccessibleBy($query, $user)
+    {
+        $storeIds = $user->getAccessibleStoreIds();
+        return $query->whereIn('mdx_store_id', $storeIds);
+    }
 }
 

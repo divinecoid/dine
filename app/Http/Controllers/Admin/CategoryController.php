@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Brand;
 use App\Models\v1\Category;
+use App\Traits\HandlesUserAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    use HandlesUserAccess;
+
     public function index(Request $request)
     {
-        $query = Category::query();
+        $query = Category::accessibleBy(auth()->user());
 
         // Search with proper grouping
         $search = $request->input('search');
@@ -45,14 +48,14 @@ class CategoryController extends Controller
 
         $perPage = $request->get('per_page', 15);
         $categories = $query->paginate($perPage)->withQueryString();
-        $brands = Brand::active()->get();
+        $brands = Brand::accessibleBy(auth()->user())->active()->get();
 
         return view('admin.categories.index', compact('categories', 'brands'));
     }
 
     public function create()
     {
-        $brands = Brand::active()->get();
+        $brands = Brand::accessibleBy(auth()->user())->active()->get();
         return view('admin.categories.create', compact('brands'));
     }
 
@@ -90,6 +93,11 @@ class CategoryController extends Controller
             $validated['sort_order'] = $lastOrder + 1;
         }
 
+        // Check if user can access the brand
+        if (!$this->canAccessBrand($validated['mdx_brand_id'])) {
+            abort(403, 'Unauthorized access to this brand.');
+        }
+
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')
@@ -98,12 +106,22 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        $brands = Brand::active()->get();
+        // Check access
+        if (!$this->canAccessBrand($category->mdx_brand_id)) {
+            abort(403, 'Unauthorized access to this category.');
+        }
+
+        $brands = Brand::accessibleBy(auth()->user())->active()->get();
         return view('admin.categories.edit', compact('category', 'brands'));
     }
 
     public function update(Request $request, Category $category)
     {
+        // Check access
+        if (!$this->canAccessBrand($category->mdx_brand_id)) {
+            abort(403, 'Unauthorized access to this category.');
+        }
+
         $validated = $request->validate([
             'mdx_brand_id' => ['required', 'exists:mdx_brands,id'],
             'name' => ['required', 'string', 'max:255'],
@@ -134,6 +152,13 @@ class CategoryController extends Controller
         // Handle checkbox
         $validated['is_active'] = (bool)($request->input('is_active', 0));
 
+        // Check if user can access the brand (if brand changed)
+        if (isset($validated['mdx_brand_id']) && $validated['mdx_brand_id'] != $category->mdx_brand_id) {
+            if (!$this->canAccessBrand($validated['mdx_brand_id'])) {
+                abort(403, 'Unauthorized access to this brand.');
+            }
+        }
+
         $category->update($validated);
 
         return redirect()->route('admin.categories.index')
@@ -142,6 +167,11 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        // Check access
+        if (!$this->canAccessBrand($category->mdx_brand_id)) {
+            abort(403, 'Unauthorized access to this category.');
+        }
+
         $category->delete();
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category deleted successfully.');

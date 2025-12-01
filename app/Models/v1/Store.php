@@ -112,11 +112,34 @@ class Store extends Model
     }
 
     /**
+     * Get the user that manages this store (store_manager).
+     */
+    public function manager()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
+
+    /**
      * Scope a query to only include active stores.
      */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope a query to filter stores accessible by a user.
+     */
+    public function scopeAccessibleBy($query, $user)
+    {
+        if ($user->isBrandOwner()) {
+            $brandIds = $user->brands()->pluck('mdx_brands.id')->toArray();
+            return $query->whereIn('mdx_brand_id', $brandIds);
+        } elseif ($user->isStoreManager() && $user->store) {
+            return $query->where('id', $user->store->id);
+        }
+        
+        return $query->whereRaw('1 = 0'); // Return empty result if no access
     }
 }
 

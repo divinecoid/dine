@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicMenuController;
 use App\Http\Controllers\PublicOrderController;
 use Illuminate\Support\Facades\Route;
@@ -9,8 +10,13 @@ Route::get('/', function () {
     return view('landing');
 });
 
-// Admin Routes
-Route::prefix('admin')->name('admin.')->group(function () {
+// Authentication Routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Admin Routes (Protected)
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.role'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // CRUD Routes

@@ -84,5 +84,14 @@ class Category extends Model
     {
         return $query->orderBy('sort_order', 'asc');
     }
+
+    /**
+     * Scope a query to filter categories accessible by a user.
+     */
+    public function scopeAccessibleBy($query, $user)
+    {
+        $brandIds = $user->getAccessibleBrandIds();
+        return $query->whereIn('mdx_brand_id', $brandIds);
+    }
 }
 

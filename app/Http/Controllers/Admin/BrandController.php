@@ -4,17 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\v1\Brand;
+use App\Traits\HandlesUserAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class BrandController extends Controller
 {
+    use HandlesUserAccess;
+
     /**
      * Display a listing of the brands.
      */
     public function index(Request $request)
     {
-        $query = Brand::query();
+        $query = Brand::accessibleBy(auth()->user());
 
         // Search
         if ($request->has('search') && $request->search) {
@@ -78,7 +81,12 @@ class BrandController extends Controller
             $validated['is_active'] = true;
         }
 
-        Brand::create($validated);
+        $brand = Brand::create($validated);
+
+        // Attach brand to user if brand owner
+        if (auth()->user()->isBrandOwner()) {
+            auth()->user()->brands()->attach($brand->id);
+        }
 
         return redirect()->route('admin.brands.index')
             ->with('success', 'Brand created successfully.');
@@ -89,6 +97,11 @@ class BrandController extends Controller
      */
     public function show(Brand $brand)
     {
+        // Check access
+        if (!$this->canAccessBrand($brand->id)) {
+            abort(403, 'Unauthorized access to this brand.');
+        }
+
         $brand->load(['stores', 'categories']);
         return view('admin.brands.show', compact('brand'));
     }
@@ -98,6 +111,11 @@ class BrandController extends Controller
      */
     public function edit(Brand $brand)
     {
+        // Check access
+        if (!$this->canAccessBrand($brand->id)) {
+            abort(403, 'Unauthorized access to this brand.');
+        }
+
         return view('admin.brands.edit', compact('brand'));
     }
 
@@ -106,6 +124,11 @@ class BrandController extends Controller
      */
     public function update(Request $request, Brand $brand)
     {
+        // Check access
+        if (!$this->canAccessBrand($brand->id)) {
+            abort(403, 'Unauthorized access to this brand.');
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'slug' => [
@@ -148,6 +171,11 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
+        // Check access
+        if (!$this->canAccessBrand($brand->id)) {
+            abort(403, 'Unauthorized access to this brand.');
+        }
+
         $brand->delete();
 
         return redirect()->route('admin.brands.index')

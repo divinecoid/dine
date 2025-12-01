@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Brand;
 use App\Models\v1\Store;
+use App\Traits\HandlesUserAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class StoreController extends Controller
 {
+    use HandlesUserAccess;
+
     public function index(Request $request)
     {
-        $query = Store::query();
+        $query = Store::accessibleBy(auth()->user());
 
         // Search with proper grouping
         $search = $request->input('search');
@@ -45,14 +48,14 @@ class StoreController extends Controller
 
         $perPage = $request->get('per_page', 15);
         $stores = $query->paginate($perPage)->withQueryString();
-        $brands = Brand::active()->get();
+        $brands = Brand::accessibleBy(auth()->user())->active()->get();
 
         return view('admin.stores.index', compact('stores', 'brands'));
     }
 
     public function create()
     {
-        $brands = Brand::active()->get();
+        $brands = Brand::accessibleBy(auth()->user())->active()->get();
         return view('admin.stores.create', compact('brands'));
     }
 
@@ -85,7 +88,17 @@ class StoreController extends Controller
         // Handle checkbox: if not checked, it will be 0, otherwise 1
         $validated['is_active'] = (bool)($request->input('is_active', 0));
 
-        Store::create($validated);
+        // Check if user can access the brand
+        if (!$this->canAccessBrand($validated['mdx_brand_id'])) {
+            abort(403, 'Unauthorized access to this brand.');
+        }
+
+        $store = Store::create($validated);
+
+        // Assign store to user if store manager
+        if (auth()->user()->isStoreManager()) {
+            $store->update(['user_id' => auth()->id()]);
+        }
 
         return redirect()->route('admin.stores.index')
             ->with('success', 'Store created successfully.');
@@ -93,12 +106,22 @@ class StoreController extends Controller
 
     public function edit(Store $store)
     {
-        $brands = Brand::active()->get();
+        // Check access
+        if (!$this->canAccessStore($store->id)) {
+            abort(403, 'Unauthorized access to this store.');
+        }
+
+        $brands = Brand::accessibleBy(auth()->user())->active()->get();
         return view('admin.stores.edit', compact('store', 'brands'));
     }
 
     public function update(Request $request, Store $store)
     {
+        // Check access
+        if (!$this->canAccessStore($store->id)) {
+            abort(403, 'Unauthorized access to this store.');
+        }
+
         $validated = $request->validate([
             'mdx_brand_id' => ['required', 'exists:mdx_brands,id'],
             'name' => ['required', 'string', 'max:255'],
@@ -126,6 +149,11 @@ class StoreController extends Controller
         // Handle checkbox: if not checked, it will be 0, otherwise 1
         $validated['is_active'] = (bool)($request->input('is_active', 0));
 
+        // Check if user can access the brand
+        if (!$this->canAccessBrand($validated['mdx_brand_id'])) {
+            abort(403, 'Unauthorized access to this brand.');
+        }
+
         $store->update($validated);
 
         return redirect()->route('admin.stores.index')
@@ -134,6 +162,11 @@ class StoreController extends Controller
 
     public function destroy(Store $store)
     {
+        // Check access
+        if (!$this->canAccessStore($store->id)) {
+            abort(403, 'Unauthorized access to this store.');
+        }
+
         $store->delete();
         return redirect()->route('admin.stores.index')
             ->with('success', 'Store deleted successfully.');

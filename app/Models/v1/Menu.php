@@ -124,5 +124,16 @@ class Menu extends Model
                   ->where('mdx_menu_store.is_available', true);
             });
     }
+
+    /**
+     * Scope a query to filter menus accessible by a user.
+     */
+    public function scopeAccessibleBy($query, $user)
+    {
+        $brandIds = $user->getAccessibleBrandIds();
+        return $query->whereHas('categories', function ($q) use ($brandIds) {
+            $q->whereIn('mdx_brand_id', $brandIds);
+        });
+    }
 }
 

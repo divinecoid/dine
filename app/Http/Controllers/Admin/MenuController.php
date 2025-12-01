@@ -6,14 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\v1\Category;
 use App\Models\v1\Menu;
 use App\Models\v1\Store;
+use App\Traits\HandlesUserAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class MenuController extends Controller
 {
+    use HandlesUserAccess;
+
     public function index(Request $request)
     {
-        $query = Menu::query();
+        $query = Menu::accessibleBy(auth()->user());
 
         // Search with proper grouping
         $search = $request->input('search');
@@ -56,14 +59,14 @@ class MenuController extends Controller
         $perPage = $request->get('per_page', 15);
         $menus = $query->paginate($perPage)->withQueryString();
         
-        $categories = Category::active()->with('brand')->orderBy('mdx_brand_id')->orderBy('sort_order')->get();
+        $categories = Category::accessibleBy(auth()->user())->active()->with('brand')->orderBy('mdx_brand_id')->orderBy('sort_order')->get();
 
         return view('admin.menus.index', compact('menus', 'categories'));
     }
 
     public function create()
     {
-        $categories = Category::active()->with('brand')->orderBy('mdx_brand_id')->orderBy('sort_order')->get();
+        $categories = Category::accessibleBy(auth()->user())->active()->with('brand')->orderBy('mdx_brand_id')->orderBy('sort_order')->get();
         return view('admin.menus.create', compact('categories'));
     }
 
@@ -99,6 +102,16 @@ class MenuController extends Controller
         $categories = $validated['categories'] ?? [];
         unset($validated['categories']);
 
+        // Check if user can access all selected categories
+        if (!empty($categories)) {
+            $categoryBrandIds = Category::whereIn('id', $categories)->pluck('mdx_brand_id')->unique()->toArray();
+            foreach ($categoryBrandIds as $brandId) {
+                if (!$this->canAccessBrand($brandId)) {
+                    abort(403, 'Unauthorized access to one or more categories.');
+                }
+            }
+        }
+
         $menu = Menu::create($validated);
 
         if (!empty($categories)) {
@@ -111,13 +124,27 @@ class MenuController extends Controller
 
     public function edit(Menu $menu)
     {
+        // Check access - menu must belong to accessible categories
+        $menuBrandIds = $menu->categories()->pluck('mdx_brand_id')->unique()->toArray();
+        $accessibleBrandIds = $this->getAccessibleBrandIds();
+        if (empty(array_intersect($menuBrandIds, $accessibleBrandIds))) {
+            abort(403, 'Unauthorized access to this menu.');
+        }
+
         $menu->load('categories');
-        $categories = Category::active()->with('brand')->orderBy('mdx_brand_id')->orderBy('sort_order')->get();
+        $categories = Category::accessibleBy(auth()->user())->active()->with('brand')->orderBy('mdx_brand_id')->orderBy('sort_order')->get();
         return view('admin.menus.edit', compact('menu', 'categories'));
     }
 
     public function update(Request $request, Menu $menu)
     {
+        // Check access
+        $menuBrandIds = $menu->categories()->pluck('mdx_brand_id')->unique()->toArray();
+        $accessibleBrandIds = $this->getAccessibleBrandIds();
+        if (empty(array_intersect($menuBrandIds, $accessibleBrandIds))) {
+            abort(403, 'Unauthorized access to this menu.');
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:mdx_menus,slug,' . $menu->id],
@@ -148,6 +175,16 @@ class MenuController extends Controller
         $categories = $validated['categories'] ?? [];
         unset($validated['categories']);
 
+        // Check if user can access all selected categories
+        if (!empty($categories)) {
+            $categoryBrandIds = Category::whereIn('id', $categories)->pluck('mdx_brand_id')->unique()->toArray();
+            foreach ($categoryBrandIds as $brandId) {
+                if (!$this->canAccessBrand($brandId)) {
+                    abort(403, 'Unauthorized access to one or more categories.');
+                }
+            }
+        }
+
         $menu->update($validated);
 
         $menu->categories()->sync($categories);
@@ -158,6 +195,13 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
+        // Check access
+        $menuBrandIds = $menu->categories()->pluck('mdx_brand_id')->unique()->toArray();
+        $accessibleBrandIds = $this->getAccessibleBrandIds();
+        if (empty(array_intersect($menuBrandIds, $accessibleBrandIds))) {
+            abort(403, 'Unauthorized access to this menu.');
+        }
+
         $menu->delete();
         return redirect()->route('admin.menus.index')
             ->with('success', 'Menu deleted successfully.');
