@@ -68,10 +68,11 @@
                     @csrf
                     <div class="space-y-4">
                         <div>
-                            <label for="email" class="block text-sm font-medium text-[#EDEDEC] mb-2">Email</label>
-                            <input id="email" name="email" type="email" autocomplete="email" required 
+                            <label for="phone" class="block text-sm font-medium text-[#EDEDEC] mb-2">Nomor Telepon</label>
+                            <input id="phone" name="phone" type="tel" autocomplete="tel" required 
                                    class="appearance-none relative block w-full px-4 py-3 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] placeholder-[#A1A09A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50 sm:text-sm transition-colors" 
-                                   placeholder="brandowner@dine.co.id" value="{{ old('email') }}">
+                                   placeholder="081234567890" value="{{ old('phone') }}">
+                            <p class="mt-1 text-xs text-[#A1A09A]">Format: 081234567890 atau +6281234567890</p>
                         </div>
                         <div>
                             <label for="password" class="block text-sm font-medium text-[#EDEDEC] mb-2">Password</label>
@@ -94,6 +95,15 @@
                                 class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-[#F53003] hover:bg-[#d42800] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F53003]/50 focus:ring-offset-[#0a0a0a] transition-colors">
                             Masuk
                         </button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-sm text-[#A1A09A]">
+                            Belum punya akun? 
+                            <a href="{{ route('register') }}" class="font-medium text-[#F53003] hover:text-[#d42800] transition-colors">
+                                Daftar di sini
+                            </a>
+                        </p>
                     </div>
                 </form>
             </div>
