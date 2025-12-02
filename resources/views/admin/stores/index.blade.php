@@ -9,10 +9,10 @@
     <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Stores</h1>
-            <p class="text-sm text-gray-500 mt-1">Manage your stores</p>
+            <h1 class="text-2xl font-bold text-[#EDEDEC]">Stores</h1>
+            <p class="text-sm text-[#A1A09A] mt-1">Manage your stores</p>
         </div>
-        <a href="{{ route('admin.stores.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+        <a href="{{ route('admin.stores.create') }}" class="inline-flex items-center px-4 py-2 bg-[#F53003] text-white rounded-lg hover:bg-[#d42800] transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -21,81 +21,81 @@
     </div>
 
     @if(session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+        <div class="bg-green-500/20 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg">
             {{ session('success') }}
         </div>
     @endif
 
     <!-- Filters -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg p-6">
         <form method="GET" action="{{ route('admin.stores.index') }}" class="flex flex-wrap gap-4">
             <div class="flex-1 min-w-[200px]">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name..." 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+                    class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] placeholder-[#A1A09A] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50 transition-colors">
             </div>
-            <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900">
+            <select name="status" class="px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50">
                 <option value="">All Status</option>
                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
             </select>
-            <select name="brand_id" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900">
+            <select name="brand_id" class="px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50">
                 <option value="">All Brands</option>
                 @foreach($brands as $brand)
                     <option value="{{ $brand->id }}" {{ (string)request('brand_id') === (string)$brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                 @endforeach
             </select>
-            <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800">Filter</button>
+            <button type="submit" class="px-6 py-2 bg-[#F53003] text-white rounded-lg hover:bg-[#d42800] transition-colors">Filter</button>
             @if(request('search') || request('status') || request('brand_id'))
-                <a href="{{ route('admin.stores.index') }}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Reset</a>
+                <a href="{{ route('admin.stores.index') }}" class="px-6 py-2 border border-[#3E3E3A] text-[#A1A09A] rounded-lg hover:bg-[#0a0a0a] transition-colors">Reset</a>
             @endif
         </form>
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-[#3E3E3A]">
+                <thead class="bg-[#0a0a0a]">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brand</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#A1A09A] uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#A1A09A] uppercase tracking-wider">Brand</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#A1A09A] uppercase tracking-wider">Address</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#A1A09A] uppercase tracking-wider">Phone</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#A1A09A] uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-[#A1A09A] uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-[#161615] divide-y divide-[#3E3E3A]">
                     @forelse($stores as $store)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-[#0a0a0a] transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $store->name }}</div>
-                                <div class="text-sm text-gray-500">{{ $store->slug ?? '-' }}</div>
+                                <div class="text-sm font-medium text-[#EDEDEC]">{{ $store->name }}</div>
+                                <div class="text-sm text-[#A1A09A]">{{ $store->slug ?? '-' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $store->brand->name ?? '-' }}</div>
+                                <div class="text-sm text-[#EDEDEC]">{{ $store->brand->name ?? '-' }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm text-gray-500">{{ \Illuminate\Support\Str::limit($store->address ?? '-', 40) }}</div>
+                                <div class="text-sm text-[#A1A09A]">{{ \Illuminate\Support\Str::limit($store->address ?? '-', 40) }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $store->phone ?? '-' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-[#A1A09A]">{{ $store->phone ?? '-' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($store->is_active)
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 border border-green-500/30">Active</span>
                                 @else
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#3E3E3A] text-[#A1A09A] border border-[#3E3E3A]">Inactive</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end space-x-2">
-                                    <a href="{{ route('admin.stores.edit', $store) }}" class="text-gray-600 hover:text-gray-900">
+                                    <a href="{{ route('admin.stores.edit', $store) }}" class="text-[#A1A09A] hover:text-[#F53003] transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
                                     </a>
                                     <form action="{{ route('admin.stores.destroy', $store) }}" method="POST" class="inline" onsubmit="return confirm('Delete this store?');">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">
+                                        <button type="submit" class="text-[#F53003] hover:text-[#d42800] transition-colors">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>
@@ -105,34 +105,34 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">No stores found.</td></tr>
+                        <tr><td colspan="6" class="px-6 py-12 text-center text-[#A1A09A]">No stores found.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
         @if($stores->hasPages())
-            <div class="bg-white px-4 py-3 border-t border-gray-200">
+            <div class="bg-[#0a0a0a] px-4 py-3 border-t border-[#3E3E3A]">
                 <div class="flex items-center justify-between">
-                    <div class="text-sm text-gray-700">
+                    <div class="text-sm text-[#A1A09A]">
                         Showing {{ $stores->firstItem() ?? 0 }} to {{ $stores->lastItem() ?? 0 }} of {{ $stores->total() }}
                     </div>
                     <div class="flex space-x-2">
                         @if($stores->onFirstPage())
-                            <span class="px-4 py-2 text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed">Previous</span>
+                            <span class="px-4 py-2 text-[#3E3E3A] bg-[#0a0a0a] rounded-lg cursor-not-allowed">Previous</span>
                         @else
-                            <a href="{{ $stores->previousPageUrl() }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Previous</a>
+                            <a href="{{ $stores->previousPageUrl() }}" class="px-4 py-2 border border-[#3E3E3A] text-[#A1A09A] rounded-lg hover:bg-[#161615] transition-colors">Previous</a>
                         @endif
                         @foreach(range(1, min(5, $stores->lastPage())) as $page)
                             @if($page == $stores->currentPage())
-                                <span class="px-4 py-2 bg-gray-900 text-white rounded-lg">{{ $page }}</span>
+                                <span class="px-4 py-2 bg-[#F53003] text-white rounded-lg">{{ $page }}</span>
                             @else
-                                <a href="{{ $stores->url($page) }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">{{ $page }}</a>
+                                <a href="{{ $stores->url($page) }}" class="px-4 py-2 border border-[#3E3E3A] text-[#A1A09A] rounded-lg hover:bg-[#161615] transition-colors">{{ $page }}</a>
                             @endif
                         @endforeach
                         @if($stores->hasMorePages())
-                            <a href="{{ $stores->nextPageUrl() }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Next</a>
+                            <a href="{{ $stores->nextPageUrl() }}" class="px-4 py-2 border border-[#3E3E3A] text-[#A1A09A] rounded-lg hover:bg-[#161615] transition-colors">Next</a>
                         @else
-                            <span class="px-4 py-2 text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed">Next</span>
+                            <span class="px-4 py-2 text-[#3E3E3A] bg-[#0a0a0a] rounded-lg cursor-not-allowed">Next</span>
                         @endif
                     </div>
                 </div>

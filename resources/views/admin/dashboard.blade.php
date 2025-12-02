@@ -9,7 +9,7 @@
     <!-- Stats Overview -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Total Brands -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,14 +17,14 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Brands</p>
-                    <p class="text-2xl font-semibold text-gray-900">-</p>
+                    <p class="text-sm font-medium text-[#A1A09A]">Total Brands</p>
+                    <p class="text-2xl font-semibold text-[#EDEDEC]">-</p>
                 </div>
             </div>
         </div>
 
         <!-- Total Stores -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,14 +32,14 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Stores</p>
-                    <p class="text-2xl font-semibold text-gray-900">-</p>
+                    <p class="text-sm font-medium text-[#A1A09A]">Total Stores</p>
+                    <p class="text-2xl font-semibold text-[#EDEDEC]">-</p>
                 </div>
             </div>
         </div>
 
         <!-- Total Menus -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,14 +47,14 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Menus</p>
-                    <p class="text-2xl font-semibold text-gray-900">-</p>
+                    <p class="text-sm font-medium text-[#A1A09A]">Total Menus</p>
+                    <p class="text-2xl font-semibold text-[#EDEDEC]">-</p>
                 </div>
             </div>
         </div>
 
         <!-- Total Orders -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0 bg-purple-500 rounded-md p-3">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,66 +62,66 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Orders</p>
-                    <p class="text-2xl font-semibold text-gray-900">-</p>
+                    <p class="text-sm font-medium text-[#A1A09A]">Total Orders</p>
+                    <p class="text-2xl font-semibold text-[#EDEDEC]">-</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-white rounded-lg shadow">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg">
+        <div class="p-6 border-b border-[#3E3E3A]">
+            <h3 class="text-lg font-semibold text-[#EDEDEC]">Quick Actions</h3>
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <a href="{{ route('admin.brands.index') }}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <a href="{{ route('admin.brands.index') }}" class="flex items-center p-4 border border-[#3E3E3A] rounded-lg hover:bg-[#0a0a0a] hover:border-[#F53003]/50 transition-colors">
                     <div class="flex-shrink-0">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-[#A1A09A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                     </div>
-                    <span class="ml-3 text-sm font-medium text-gray-900">Add Brand</span>
+                    <span class="ml-3 text-sm font-medium text-[#EDEDEC]">Add Brand</span>
                 </a>
 
-                <a href="{{ route('admin.stores.index') }}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <a href="{{ route('admin.stores.index') }}" class="flex items-center p-4 border border-[#3E3E3A] rounded-lg hover:bg-[#0a0a0a] hover:border-[#F53003]/50 transition-colors">
                     <div class="flex-shrink-0">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-[#A1A09A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                     </div>
-                    <span class="ml-3 text-sm font-medium text-gray-900">Add Store</span>
+                    <span class="ml-3 text-sm font-medium text-[#EDEDEC]">Add Store</span>
                 </a>
 
-                <a href="{{ route('admin.menus.index') }}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <a href="{{ route('admin.menus.index') }}" class="flex items-center p-4 border border-[#3E3E3A] rounded-lg hover:bg-[#0a0a0a] hover:border-[#F53003]/50 transition-colors">
                     <div class="flex-shrink-0">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-[#A1A09A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                     </div>
-                    <span class="ml-3 text-sm font-medium text-gray-900">Add Menu</span>
+                    <span class="ml-3 text-sm font-medium text-[#EDEDEC]">Add Menu</span>
                 </a>
 
-                <a href="{{ route('admin.bank-accounts.index') }}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <a href="{{ route('admin.bank-accounts.index') }}" class="flex items-center p-4 border border-[#3E3E3A] rounded-lg hover:bg-[#0a0a0a] hover:border-[#F53003]/50 transition-colors">
                     <div class="flex-shrink-0">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-[#A1A09A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                     </div>
-                    <span class="ml-3 text-sm font-medium text-gray-900">Add Bank Account</span>
+                    <span class="ml-3 text-sm font-medium text-[#EDEDEC]">Add Bank Account</span>
                 </a>
             </div>
         </div>
     </div>
 
     <!-- Recent Activity -->
-    <div class="bg-white rounded-lg shadow">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg">
+        <div class="p-6 border-b border-[#3E3E3A]">
+            <h3 class="text-lg font-semibold text-[#EDEDEC]">Recent Activity</h3>
         </div>
         <div class="p-6">
-            <p class="text-sm text-gray-500">No recent activity to display.</p>
+            <p class="text-sm text-[#A1A09A]">No recent activity to display.</p>
         </div>
     </div>
 </div>
