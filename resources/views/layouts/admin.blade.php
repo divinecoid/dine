@@ -47,6 +47,28 @@
             background-color: #0a0a0a !important;
             color: #EDEDEC !important;
         }
+        
+        /* Custom Scrollbar for Sidebar */
+        nav::-webkit-scrollbar {
+            width: 6px;
+        }
+        nav::-webkit-scrollbar-track {
+            background: #0a0a0a;
+            border-radius: 3px;
+        }
+        nav::-webkit-scrollbar-thumb {
+            background: #3E3E3A;
+            border-radius: 3px;
+        }
+        nav::-webkit-scrollbar-thumb:hover {
+            background: #4a4a46;
+        }
+        
+        /* Firefox scrollbar */
+        nav {
+            scrollbar-width: thin;
+            scrollbar-color: #3E3E3A #0a0a0a;
+        }
     </style>
     @stack('styles')
 </head>
