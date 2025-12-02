@@ -20,6 +20,24 @@
         [class*="hover:bg-[#d42800]"]:hover { background-color: #d42800 !important; }
         [class*="placeholder-[#A1A09A]"]::placeholder { color: #A1A09A !important; }
         
+        /* Input fields dark theme */
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="password"],
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"],
+        textarea {
+            background-color: #0a0a0a !important;
+            color: #EDEDEC !important;
+        }
+        input::placeholder,
+        textarea::placeholder {
+            color: #A1A09A !important;
+        }
+        
         /* Select dropdown dark theme */
         select {
             background-color: #0a0a0a !important;
@@ -38,7 +56,7 @@
         <aside id="sidebar" class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-[#161615] border-r border-[#3E3E3A] transform -translate-x-full lg:translate-x-0 lg:static lg:inset-0 flex flex-col">
             <!-- Sidebar Header - Sticky -->
             <div class="flex items-center justify-between h-16 px-6 border-b border-[#3E3E3A] bg-[#161615] sticky top-0 z-10 flex-shrink-0">
-                <h1 class="text-xl font-bold text-[#F53003]">DINE.CO.ID</h1>
+                <h1 class="text-xl font-bold text-white">DINE.CO.ID</h1>
                 <button id="closeSidebar" class="lg:hidden text-[#A1A09A] hover:text-[#EDEDEC]">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="max-w-3xl">
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg shadow p-6">
         <form action="{{ route('admin.users.update', $user) }}" method="POST">
             @csrf
             @method('PUT')
@@ -14,49 +14,49 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Name -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                        Name <span class="text-red-500">*</span>
+                    <label for="name" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                        Name <span class="text-[#F53003]">*</span>
                     </label>
                     <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 @error('name') border-red-500 @enderror">
+                        class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] placeholder-[#A1A09A] rounded-lg focus:ring-[#F53003]/50 focus:border-[#F53003]/50 transition-colors @error('name') border-[#F53003] @enderror">
                     @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-[#F53003]">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Email -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        Email <span class="text-red-500">*</span>
+                    <label for="email" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                        Email <span class="text-[#F53003]">*</span>
                     </label>
                     <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 @error('email') border-red-500 @enderror">
+                        class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] placeholder-[#A1A09A] rounded-lg focus:ring-[#F53003]/50 focus:border-[#F53003]/50 transition-colors @error('email') border-[#F53003] @enderror">
                     @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-[#F53003]">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Phone -->
                 <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                        Phone <span class="text-red-500">*</span>
+                    <label for="phone" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                        Phone <span class="text-[#F53003]">*</span>
                     </label>
                     <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 @error('phone') border-red-500 @enderror"
+                        class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] placeholder-[#A1A09A] rounded-lg focus:ring-[#F53003]/50 focus:border-[#F53003]/50 transition-colors @error('phone') border-[#F53003] @enderror"
                         placeholder="081234567890">
-                    <p class="mt-1 text-xs text-gray-500">Format: 081234567890 atau +6281234567890</p>
+                    <p class="mt-1 text-xs text-[#A1A09A]">Format: 081234567890 atau +6281234567890</p>
                     @error('phone')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-[#F53003]">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Role -->
                 <div>
-                    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
-                        Role <span class="text-red-500">*</span>
+                    <label for="role" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                        Role <span class="text-[#F53003]">*</span>
                     </label>
                     <select id="role" name="role" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 @error('role') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-[#3E3E3A] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50 @error('role') border-[#F53003] @enderror">
                         <option value="">Select Role</option>
                         @if($isBrandOwner ?? false)
                             <option value="store_manager" {{ old('role', $user->role) === 'store_manager' ? 'selected' : '' }}>Store Manager</option>
@@ -66,18 +66,18 @@
                         <option value="kasir" {{ old('role', $user->role) === 'kasir' ? 'selected' : '' }}>Kasir</option>
                     </select>
                     @error('role')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-[#F53003]">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Store -->
                 <div class="md:col-span-2">
-                    <label for="mdx_store_id" class="block text-sm font-medium text-gray-700 mb-2">
-                        Store <span class="text-red-500">*</span>
-                        <span class="text-gray-400 text-xs" id="store-help-text">(Required for Chef, Waiter, Kasir)</span>
+                    <label for="mdx_store_id" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                        Store <span class="text-[#F53003]">*</span>
+                        <span class="text-[#A1A09A] text-xs" id="store-help-text">(Required for Chef, Waiter, Kasir)</span>
                     </label>
                     <select id="mdx_store_id" name="mdx_store_id"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 @error('mdx_store_id') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-[#3E3E3A] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50 @error('mdx_store_id') border-[#F53003] @enderror">
                         <option value="">Select Store</option>
                         @foreach($stores as $store)
                             <option value="{{ $store->id }}" 
@@ -90,36 +90,36 @@
                         @endforeach
                     </select>
                     @error('mdx_store_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-[#F53003]">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Password -->
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                        Password <span class="text-gray-400 text-xs">(leave blank to keep current)</span>
+                    <label for="password" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                        Password <span class="text-[#A1A09A] text-xs">(leave blank to keep current)</span>
                     </label>
                     <input type="password" id="password" name="password"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 @error('password') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-[#3E3E3A] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50 @error('password') border-[#F53003] @enderror">
                     @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-[#F53003]">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Password Confirmation -->
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="password_confirmation" class="block text-sm font-medium text-[#EDEDEC] mb-2">
                         Confirm Password
                     </label>
                     <input type="password" id="password_confirmation" name="password_confirmation"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900">
+                        class="w-full px-4 py-2 border border-[#3E3E3A] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50">
                 </div>
             </div>
 
             <!-- Buttons -->
             <div class="flex justify-end space-x-4 mt-6">
-                <a href="{{ route('admin.users.index') }}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancel</a>
-                <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800">Update User</button>
+                <a href="{{ route('admin.users.index') }}" class="px-6 py-2 border border-[#3E3E3A] text-[#A1A09A] rounded-lg hover:bg-[#0a0a0a] transition-colors">Cancel</a>
+                <button type="submit" class="px-6 py-2 bg-[#F53003] text-white rounded-lg hover:bg-[#d42800] transition-colors">Update User</button>
             </div>
         </form>
     </div>
