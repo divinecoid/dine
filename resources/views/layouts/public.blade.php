@@ -22,7 +22,7 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans antialiased">
+<body class="bg-[#0a0a0a] text-[#EDEDEC] font-sans antialiased">
     @yield('content')
 </body>
 </html>

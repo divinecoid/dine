@@ -3,34 +3,34 @@
 @section('title', ($brand->name ?? 'Menu') . ' - Menu')
 
 @section('content')
-<div class="min-h-screen bg-white">
+<div class="min-h-screen bg-[#0a0a0a]">
     <!-- Category Navigation Bar -->
-    <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm overflow-visible">
+    <div class="sticky top-0 z-10 bg-[#0a0a0a] border-b border-[#3E3E3A] shadow-sm overflow-visible">
         <div class="flex items-center overflow-x-auto scrollbar-hide px-4 py-3 gap-4">
             <!-- Hamburger Menu Icon -->
             <div class="relative shrink-0 z-20">
                 <button type="button" 
                         id="menu-toggle"
-                        class="flex items-center justify-center w-10 h-10 hover:bg-gray-100 rounded-lg transition-colors" 
+                        class="flex items-center justify-center w-10 h-10 hover:bg-[#161615] rounded-lg transition-colors" 
                         aria-label="Menu"
                         onclick="toggleMenu()">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-[#EDEDEC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
                 
                 <!-- Dropdown Menu -->
                 <div id="menu-dropdown" 
-                     class="fixed left-4 top-16 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 hidden z-[100]">
+                     class="fixed left-4 top-16 w-48 bg-[#161615] rounded-lg shadow-xl border border-[#3E3E3A] py-2 hidden z-[100]">
                     <a href="{{ route('public.menu', ['brandSlug' => $brand->slug, 'table' => $tableIdentifier]) }}" 
-                       class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                       class="flex items-center gap-3 px-4 py-2 text-sm text-[#EDEDEC] hover:bg-[#0a0a0a] transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                         </svg>
                         <span>Menu</span>
                     </a>
                     <a href="{{ route('public.orders.index', ['table' => $tableIdentifier]) }}" 
-                       class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                       class="flex items-center gap-3 px-4 py-2 text-sm text-[#EDEDEC] hover:bg-[#0a0a0a] transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
@@ -45,11 +45,11 @@
                 <a href="{{ route('public.menu', ['brandSlug' => $brand->slug, 'category' => 'all', 'table' => $tableIdentifier]) }}"
                    class="shrink-0 px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors relative
                           {{ isset($showAll) && $showAll 
-                              ? 'text-gray-900 font-semibold' 
-                              : 'text-gray-600 hover:text-gray-900' }}">
+                              ? 'text-[#EDEDEC] font-semibold' 
+                              : 'text-[#A1A09A] hover:text-[#EDEDEC]' }}">
                     Semua
                     @if(isset($showAll) && $showAll)
-                        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"></span>
+                        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F53003]"></span>
                     @endif
                 </a>
                 
@@ -57,15 +57,15 @@
                     <a href="{{ route('public.menu', ['brandSlug' => $brand->slug, 'category' => $category->id, 'table' => $tableIdentifier]) }}"
                        class="shrink-0 px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors relative
                               {{ $selectedCategory && $selectedCategory->id === $category->id 
-                                  ? 'text-gray-900 font-semibold' 
-                                  : 'text-gray-600 hover:text-gray-900' }}">
+                                  ? 'text-[#EDEDEC] font-semibold' 
+                                  : 'text-[#A1A09A] hover:text-[#EDEDEC]' }}">
                         {{ $category->name }}
                         @if($selectedCategory && $selectedCategory->id === $category->id)
-                            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"></span>
+                            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F53003]"></span>
                         @endif
                     </a>
                 @empty
-                    <span class="text-sm text-gray-500 px-4 py-2">Tidak ada kategori</span>
+                    <span class="text-sm text-[#A1A09A] px-4 py-2">Tidak ada kategori</span>
                 @endforelse
             </div>
         </div>
@@ -76,16 +76,16 @@
         @if(($selectedCategory || (isset($showAll) && $showAll)) && $menus->isNotEmpty())
             <div class="grid grid-cols-2 gap-4">
                 @foreach($menus as $menu)
-                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-[#161615] rounded-lg border border-[#3E3E3A] overflow-hidden hover:border-[#F53003]/50 transition-all">
                         <!-- Menu Image -->
-                        <div class="aspect-square bg-gray-100 overflow-hidden">
+                        <div class="aspect-square bg-[#0a0a0a] overflow-hidden">
                             @if($menu->image)
                                 <img src="{{ Str::startsWith($menu->image, ['http://', 'https://']) ? $menu->image : asset('storage/' . $menu->image) }}" 
                                      alt="{{ $menu->name }}"
                                      class="w-full h-full object-cover">
                             @else
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                                    <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] to-[#161615]">
+                                    <svg class="w-16 h-16 text-[#3E3E3A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
@@ -94,18 +94,18 @@
 
                         <!-- Menu Info -->
                         <div class="p-3">
-                            <h3 class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 min-h-[2.5rem]">
+                            <h3 class="font-semibold text-[#EDEDEC] text-sm mb-1 line-clamp-2 min-h-[2.5rem]">
                                 {{ $menu->name }}
                             </h3>
-                            <p class="text-xs text-gray-500 mb-2 line-clamp-2">
+                            <p class="text-xs text-[#A1A09A] mb-2 line-clamp-2">
                                 {{ Str::limit($menu->description ?? '', 50) }}
                             </p>
                             <div class="flex items-center justify-between">
-                                <span class="text-base font-bold text-gray-900">
+                                <span class="text-base font-bold text-[#EDEDEC]">
                                     Rp {{ number_format($menu->price, 0, ',', '.') }}
                                 </span>
                                 <button type="button" 
-                                        class="px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md hover:bg-gray-800 transition-colors active:scale-95"
+                                        class="px-3 py-1.5 bg-[#F53003] text-white text-xs font-medium rounded-md hover:bg-[#d42800] transition-colors active:scale-95"
                                         onclick="addToCart({{ $menu->id }}, '{{ addslashes($menu->name) }}', {{ $menu->price }})">
                                     + Add
                                 </button>
@@ -116,10 +116,10 @@
             </div>
         @elseif(($selectedCategory || (isset($showAll) && $showAll)) && $menus->isEmpty())
             <div class="text-center py-12">
-                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-16 h-16 text-[#3E3E3A] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
-                <p class="text-gray-500 text-sm">
+                <p class="text-[#A1A09A] text-sm">
                     @if(isset($showAll) && $showAll)
                         Tidak ada menu tersedia
                     @else
@@ -129,24 +129,24 @@
             </div>
         @else
             <div class="text-center py-12">
-                <p class="text-gray-500 text-sm">Pilih kategori untuk melihat menu</p>
+                <p class="text-[#A1A09A] text-sm">Pilih kategori untuk melihat menu</p>
             </div>
         @endif
     </div>
 
     <!-- Cart Summary (Floating Bottom) -->
-    <div id="cart-summary" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 hidden">
-        <div class="container mx-auto flex items-center justify-between">
+    <div id="cart-summary" class="fixed bottom-0 left-0 right-0 bg-[#161615] border-t border-[#3E3E3A] shadow-lg p-4 hidden">
+        <div class="container mx-auto flex items-center justify-between gap-4">
             <div>
-                <p class="text-sm text-gray-600">Total Item</p>
-                <p id="cart-total-items" class="text-lg font-bold text-gray-900">0</p>
+                <p class="text-sm text-[#A1A09A]">Total Item</p>
+                <p id="cart-total-items" class="text-lg font-bold text-[#EDEDEC]">0</p>
             </div>
             <div class="text-right">
-                <p class="text-sm text-gray-600">Total Harga</p>
-                <p id="cart-total-price" class="text-lg font-bold text-gray-900">Rp 0</p>
+                <p class="text-sm text-[#A1A09A]">Total Harga</p>
+                <p id="cart-total-price" class="text-lg font-bold text-[#EDEDEC]">Rp 0</p>
             </div>
             <button id="cart-checkout-btn" 
-                    class="px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                    class="px-6 py-3 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors whitespace-nowrap"
                     onclick="checkout()">
                 Pesan
             </button>
@@ -155,23 +155,23 @@
 </div>
 
 <!-- Alert Modal -->
-<div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+<div id="alertModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg shadow-xl max-w-sm w-full p-6">
         <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full" id="alertModalIcon">
             <!-- Icon will be set dynamically -->
         </div>
         
-        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2" id="alertModalTitle">
+        <h3 class="text-lg font-semibold text-[#EDEDEC] text-center mb-2" id="alertModalTitle">
             <!-- Title will be set dynamically -->
         </h3>
         
-        <p class="text-sm text-gray-600 text-center mb-6" id="alertModalMessage">
+        <p class="text-sm text-[#A1A09A] text-center mb-6" id="alertModalMessage">
             <!-- Message will be set dynamically -->
         </p>
         
         <button type="button" 
                 onclick="closeAlertModal()"
-                class="w-full px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                class="w-full px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors"
                 id="alertModalButton">
             OK
         </button>
@@ -179,28 +179,28 @@
 </div>
 
 <!-- Quantity Input Modal -->
-<div id="quantityModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-2" id="quantityModalTitle">Pilih Jumlah</h3>
-        <p class="text-sm text-gray-600 mb-4" id="quantityModalMenuName"></p>
+<div id="quantityModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg shadow-xl max-w-sm w-full p-6">
+        <h3 class="text-lg font-semibold text-[#EDEDEC] mb-2" id="quantityModalTitle">Pilih Jumlah</h3>
+        <p class="text-sm text-[#A1A09A] mb-4" id="quantityModalMenuName"></p>
         
         <div class="flex items-center justify-center gap-4 mb-6">
             <button type="button" 
                     onclick="decreaseQuantity()"
-                    class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-12 h-12 flex items-center justify-center border-2 border-[#3E3E3A] rounded-lg hover:bg-[#0a0a0a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     id="quantityDecreaseBtn">
-                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 text-[#EDEDEC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                 </svg>
             </button>
             <div class="w-20 text-center">
-                <span class="text-3xl font-bold text-gray-900" id="quantityDisplay">1</span>
+                <span class="text-3xl font-bold text-[#EDEDEC]" id="quantityDisplay">1</span>
             </div>
             <button type="button" 
                     onclick="increaseQuantity()"
-                    class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    class="w-12 h-12 flex items-center justify-center border-2 border-[#3E3E3A] rounded-lg hover:bg-[#0a0a0a] transition-colors"
                     id="quantityIncreaseBtn">
-                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 text-[#EDEDEC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
             </button>
@@ -209,12 +209,12 @@
         <div class="flex gap-3">
             <button type="button" 
                     onclick="closeQuantityModal()"
-                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                    class="flex-1 px-4 py-2 border border-[#3E3E3A] text-[#EDEDEC] font-semibold rounded-lg hover:bg-[#0a0a0a] transition-colors">
                 Batal
             </button>
             <button type="button" 
                     onclick="confirmQuantity()"
-                    class="flex-1 px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+                    class="flex-1 px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
                 Tambah ke Keranjang
             </button>
         </div>
@@ -222,30 +222,30 @@
 </div>
 
 <!-- Customer Info Modal -->
-<div id="customerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Customer</h3>
+<div id="customerModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-lg font-semibold text-[#EDEDEC] mb-4">Informasi Customer</h3>
         
         <div class="space-y-4 mb-6">
             <div>
-                <label for="customerNameInput" class="block text-sm font-medium text-gray-700 mb-2">
-                    Nama <span class="text-red-500">*</span>
+                <label for="customerNameInput" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                    Nama <span class="text-[#F53003]">*</span>
                 </label>
                 <input type="text" 
                        id="customerNameInput"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                       class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] placeholder-[#A1A09A] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50 transition-colors"
                        placeholder="Masukkan nama Anda"
                        required>
-                <p class="text-xs text-red-500 mt-1 hidden" id="customerNameError">Nama wajib diisi</p>
+                <p class="text-xs text-[#F53003] mt-1 hidden" id="customerNameError">Nama wajib diisi</p>
             </div>
             
             <div>
-                <label for="customerPhoneInput" class="block text-sm font-medium text-gray-700 mb-2">
-                    No. Telepon <span class="text-gray-400 text-xs">(Opsional)</span>
+                <label for="customerPhoneInput" class="block text-sm font-medium text-[#EDEDEC] mb-2">
+                    No. Telepon <span class="text-[#A1A09A] text-xs">(Opsional)</span>
                 </label>
                 <input type="tel" 
                        id="customerPhoneInput"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                       class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] placeholder-[#A1A09A] rounded-lg focus:ring-2 focus:ring-[#F53003]/50 focus:border-[#F53003]/50 transition-colors"
                        placeholder="Masukkan nomor telepon">
             </div>
         </div>
@@ -253,12 +253,12 @@
         <div class="flex gap-3">
             <button type="button" 
                     onclick="closeCustomerModal()"
-                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                    class="flex-1 px-4 py-2 border border-[#3E3E3A] text-[#EDEDEC] font-semibold rounded-lg hover:bg-[#0a0a0a] transition-colors">
                 Batal
             </button>
             <button type="button" 
                     onclick="confirmCustomerInfo()"
-                    class="flex-1 px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+                    class="flex-1 px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
                 Lanjutkan Pesanan
             </button>
         </div>
@@ -548,9 +548,67 @@
             confirmCustomerInfo();
         }
     });
+
+    // Alert Modal Functions
+    function showAlert(type, title, message, callback = null) {
+        const modal = document.getElementById('alertModal');
+        const icon = document.getElementById('alertModalIcon');
+        const titleEl = document.getElementById('alertModalTitle');
+        const messageEl = document.getElementById('alertModalMessage');
+        const button = document.getElementById('alertModalButton');
+        
+        // Set title and message
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        
+        // Set icon based on type
+        icon.innerHTML = '';
+        if (type === 'success') {
+            icon.className = 'flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20';
+            icon.innerHTML = '<svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        } else if (type === 'error') {
+            icon.className = 'flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-[#F53003]/20';
+            icon.innerHTML = '<svg class="w-8 h-8 text-[#F53003]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        } else {
+            icon.className = 'flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-blue-500/20';
+            icon.innerHTML = '<svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        }
+        
+        // Show modal
+        modal.classList.remove('hidden');
+        
+        // Handle button click
+        button.onclick = function() {
+            closeAlertModal();
+            if (callback && typeof callback === 'function') {
+                callback();
+            }
+        };
+    }
+
+    function closeAlertModal() {
+        document.getElementById('alertModal').classList.add('hidden');
+    }
+
+    // Close alert modal when clicking outside
+    document.getElementById('alertModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAlertModal();
+        }
+    });
 </script>
 
 <style>
+    /* Dark Theme Utility Classes */
+    [class*="bg-[#0a0a0a]"] { background-color: #0a0a0a !important; }
+    [class*="bg-[#161615]"] { background-color: #161615 !important; }
+    [class*="text-[#EDEDEC]"] { color: #EDEDEC !important; }
+    [class*="text-[#A1A09A]"] { color: #A1A09A !important; }
+    [class*="border-[#3E3E3A]"] { border-color: #3E3E3A !important; }
+    [class*="bg-[#F53003]"] { background-color: #F53003 !important; }
+    [class*="hover:bg-[#d42800]"]:hover { background-color: #d42800 !important; }
+    [class*="placeholder-[#A1A09A]"]::placeholder { color: #A1A09A !important; }
+    
     .scrollbar-hide {
         -ms-overflow-style: none;
         scrollbar-width: none;
