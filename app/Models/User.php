@@ -23,6 +23,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'mdx_store_id',
     ];
 
     /**
@@ -116,5 +117,45 @@ class User extends Authenticatable
         }
         
         return [];
+    }
+
+    /**
+     * Get the store where the user works (for chef, waiter, kasir).
+     */
+    public function workStore()
+    {
+        return $this->belongsTo(\App\Models\v1\Store::class, 'mdx_store_id');
+    }
+
+    /**
+     * Check if user is chef.
+     */
+    public function isChef(): bool
+    {
+        return $this->role === 'chef';
+    }
+
+    /**
+     * Check if user is waiter.
+     */
+    public function isWaiter(): bool
+    {
+        return $this->role === 'waiter';
+    }
+
+    /**
+     * Check if user is kasir.
+     */
+    public function isKasir(): bool
+    {
+        return $this->role === 'kasir';
+    }
+
+    /**
+     * Check if user is staff (chef, waiter, or kasir).
+     */
+    public function isStaff(): bool
+    {
+        return in_array($this->role, ['chef', 'waiter', 'kasir']);
     }
 }

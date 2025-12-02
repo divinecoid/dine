@@ -29,13 +29,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.role'])->grou
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class);
     
-    Route::get('/users', function () {
-        return view('admin.users.index');
-    })->name('users.index');
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     
-    Route::get('/bank-accounts', function () {
-        return view('admin.bank-accounts.index');
-    })->name('bank-accounts.index');
+    Route::resource('bank-accounts', \App\Http\Controllers\Admin\BankAccountController::class);
+    Route::post('bank-accounts/{bankAccount}/verify', [\App\Http\Controllers\Admin\BankAccountController::class, 'verify'])->name('bank-accounts.verify');
     
     Route::get('/feedback', function () {
         return view('admin.feedback.index');

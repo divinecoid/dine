@@ -35,6 +35,7 @@ class BankAccount extends Model
         'balance',
         'minimum_balance',
         'is_active',
+        'is_verified',
         'notes',
     ];
 
@@ -49,6 +50,7 @@ class BankAccount extends Model
             'balance' => 'decimal:2',
             'minimum_balance' => 'decimal:2',
             'is_active' => 'boolean',
+            'is_verified' => 'boolean',
         ];
     }
 
