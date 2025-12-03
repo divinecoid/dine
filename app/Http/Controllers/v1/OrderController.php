@@ -15,6 +15,42 @@ use Illuminate\Support\Facades\Validator;
 class OrderController extends Controller
 {
     /**
+     * Check if there's an incomplete order for a table.
+     */
+    public function checkIncompleteOrder(Request $request): JsonResponse
+    {
+        $request->validate([
+            'mdx_table_id' => ['required', 'exists:mdx_tables,id'],
+        ]);
+
+        $order = Order::where('mdx_table_id', $request->mdx_table_id)
+            ->where('status', '!=', 'completed')
+            ->where('status', '!=', 'cancelled')
+            ->notClosed()
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($order) {
+            return response()->json([
+                'success' => true,
+                'has_incomplete_order' => true,
+                'data' => [
+                    'order' => $order->load(['store', 'brand', 'table', 'orderDetails.menu']),
+                    'customer_name' => $order->customer_name,
+                    'customer_phone' => $order->customer_phone,
+                    'customer_email' => $order->customer_email,
+                ],
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'has_incomplete_order' => false,
+            'data' => null,
+        ]);
+    }
+
+    /**
      * Display a listing of the orders.
      */
     public function index(Request $request): JsonResponse
@@ -106,12 +142,27 @@ class OrderController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Check if there's an incomplete order for this table first
+        $hasIncompleteOrder = false;
+        if ($request->has('mdx_table_id') && !empty($request->mdx_table_id)) {
+            $existingOrder = Order::where('mdx_table_id', $request->mdx_table_id)
+                ->where('status', '!=', 'completed')
+                ->where('status', '!=', 'cancelled')
+                ->notClosed()
+                ->first();
+            
+            if ($existingOrder) {
+                $hasIncompleteOrder = true;
+            }
+        }
+
+        // Customer name is required only if no incomplete order exists
         $validator = Validator::make($request->all(), [
             'mdx_store_id' => ['required', 'exists:mdx_stores,id'],
             'mdx_brand_id' => ['nullable', 'exists:mdx_brands,id'],
             'mdx_table_id' => ['nullable', 'exists:mdx_tables,id'],
             'order_type' => ['nullable', 'in:dine_in,takeaway,delivery'],
-            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_name' => [$hasIncompleteOrder ? 'nullable' : 'required', 'string', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:255'],
             'customer_email' => ['nullable', 'email', 'max:255'],
             'delivery_address' => ['nullable', 'required_if:order_type,delivery', 'string'],
@@ -144,8 +195,45 @@ class OrderController extends Controller
             $items = $data['items'];
             unset($data['items']);
 
-            // Create order
-            $order = Order::create($data);
+            // Check if there's an incomplete order for this table
+            $existingOrder = null;
+            if (!empty($data['mdx_table_id'])) {
+                $existingOrder = Order::where('mdx_table_id', $data['mdx_table_id'])
+                    ->where('status', '!=', 'completed')
+                    ->where('status', '!=', 'cancelled')
+                    ->notClosed()
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+
+            if ($existingOrder) {
+                // Add items to existing order
+                $order = $existingOrder;
+                
+                // Update customer info if provided (optional update)
+                if (isset($data['customer_name']) && !empty($data['customer_name'])) {
+                    $order->customer_name = $data['customer_name'];
+                }
+                if (isset($data['customer_phone']) && !empty($data['customer_phone'])) {
+                    $order->customer_phone = $data['customer_phone'];
+                }
+                if (isset($data['customer_email']) && !empty($data['customer_email'])) {
+                    $order->customer_email = $data['customer_email'];
+                }
+                
+                // Update notes if provided (append or replace)
+                if (isset($data['notes']) && !empty($data['notes'])) {
+                    $existingNotes = $order->notes;
+                    $order->notes = $existingNotes 
+                        ? $existingNotes . "\n" . $data['notes'] 
+                        : $data['notes'];
+                }
+                
+                $order->save();
+            } else {
+                // Create new order
+                $order = Order::create($data);
+            }
 
             // Create order details
             $subtotal = 0;
@@ -173,9 +261,14 @@ class OrderController extends Controller
                 $subtotal += $itemSubtotal;
             }
 
-            // Calculate and update totals
-            $order->subtotal = $subtotal;
-            $order->total_amount = $subtotal 
+            // Recalculate totals (add new items to existing subtotal if order exists)
+            if ($existingOrder) {
+                $order->subtotal += $subtotal;
+            } else {
+                $order->subtotal = $subtotal;
+            }
+            
+            $order->total_amount = $order->subtotal 
                 - ($order->discount_amount ?? 0) 
                 + ($order->tax_amount ?? 0) 
                 + ($order->service_charge ?? 0);
@@ -187,9 +280,9 @@ class OrderController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Order created successfully',
+                'message' => $existingOrder ? 'Items added to existing order successfully' : 'Order created successfully',
                 'data' => $order,
-            ], 201);
+            ], $existingOrder ? 200 : 201);
         } catch (\Exception $e) {
             DB::rollBack();
 

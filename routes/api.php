@@ -88,6 +88,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index']);
         Route::post('/', [OrderController::class, 'store']);
+        Route::get('/check-incomplete', [OrderController::class, 'checkIncompleteOrder']);
         // Specific routes must come before parameterized routes
         Route::post('/{orderNumber}/cancel', [OrderController::class, 'cancel'])->where('orderNumber', '[A-Z0-9-]+');
         Route::post('/{id}/restore', [OrderController::class, 'restore']);

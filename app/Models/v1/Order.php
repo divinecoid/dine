@@ -193,6 +193,14 @@ class Order extends Model
     }
 
     /**
+     * Get the payments for this order.
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'trx_order_id');
+    }
+
+    /**
      * Calculate and update order totals.
      */
     public function calculateTotals(): void

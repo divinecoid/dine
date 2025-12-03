@@ -23,6 +23,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'account_type',
         'mdx_store_id',
     ];
 
@@ -157,5 +158,42 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return in_array($this->role, ['chef', 'waiter', 'kasir']);
+    }
+
+    /**
+     * Check if user has CORE account type.
+     */
+    public function isCoreAccount(): bool
+    {
+        return $this->account_type === 'CORE';
+    }
+
+    /**
+     * Check if user has SCALE account type.
+     */
+    public function isScaleAccount(): bool
+    {
+        return $this->account_type === 'SCALE';
+    }
+
+    /**
+     * Check if user has INFINITE account type.
+     */
+    public function isInfiniteAccount(): bool
+    {
+        return $this->account_type === 'INFINITE';
+    }
+
+    /**
+     * Get account type label.
+     */
+    public function getAccountTypeLabel(): ?string
+    {
+        return match($this->account_type) {
+            'CORE' => 'Core',
+            'SCALE' => 'Scale',
+            'INFINITE' => 'Infinite',
+            default => null,
+        };
     }
 }

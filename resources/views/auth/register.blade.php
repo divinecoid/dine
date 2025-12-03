@@ -99,9 +99,57 @@
             @endif
 
             <div class="bg-[#161615] border border-[#3E3E3A] rounded-2xl p-8">
-                <form class="space-y-6" action="{{ route('register') }}" method="POST">
+                <form class="space-y-6" action="{{ route('register.store') }}" method="POST">
                     @csrf
                     <div class="space-y-4">
+                        <!-- Account Type Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-[#EDEDEC] mb-3">Pilih Tipe Akun <span class="text-[#F53003]">*</span></label>
+                            <div class="grid grid-cols-1 gap-3">
+                                <label class="relative flex items-center p-4 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-lg cursor-pointer hover:border-[#F53003]/50 transition-colors">
+                                    <input type="radio" name="account_type" value="CORE" required class="sr-only peer" {{ old('account_type') === 'CORE' ? 'checked' : '' }}>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-base font-semibold text-[#EDEDEC]">CORE</span>
+                                            <span class="text-sm font-bold text-green-400">GRATIS</span>
+                                        </div>
+                                        <p class="text-xs text-[#A1A09A]">Paket dasar untuk memulai bisnis Anda</p>
+                                    </div>
+                                    <div class="ml-4 w-5 h-5 border-2 border-[#3E3E3A] rounded-full peer-checked:border-[#F53003] peer-checked:bg-[#F53003] flex items-center justify-center">
+                                        <div class="w-2 h-2 bg-[#F53003] rounded-full hidden peer-checked:block"></div>
+                                    </div>
+                                </label>
+                                
+                                <label class="relative flex items-center p-4 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-lg cursor-pointer hover:border-[#F53003]/50 transition-colors">
+                                    <input type="radio" name="account_type" value="SCALE" required class="sr-only peer" {{ old('account_type') === 'SCALE' ? 'checked' : '' }}>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-base font-semibold text-[#EDEDEC]">SCALE</span>
+                                            <span class="text-sm font-bold text-[#F53003]">Rp 100.000</span>
+                                        </div>
+                                        <p class="text-xs text-[#A1A09A]">Paket untuk bisnis yang berkembang</p>
+                                    </div>
+                                    <div class="ml-4 w-5 h-5 border-2 border-[#3E3E3A] rounded-full peer-checked:border-[#F53003] peer-checked:bg-[#F53003] flex items-center justify-center">
+                                        <div class="w-2 h-2 bg-[#F53003] rounded-full hidden peer-checked:block"></div>
+                                    </div>
+                                </label>
+                                
+                                <label class="relative flex items-center p-4 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-lg cursor-pointer hover:border-[#F53003]/50 transition-colors">
+                                    <input type="radio" name="account_type" value="INFINITE" required class="sr-only peer" {{ old('account_type') === 'INFINITE' ? 'checked' : '' }}>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-base font-semibold text-[#EDEDEC]">INFINITE</span>
+                                            <span class="text-sm font-bold text-[#F53003]">Rp 500.000</span>
+                                        </div>
+                                        <p class="text-xs text-[#A1A09A]">Paket lengkap untuk bisnis besar</p>
+                                    </div>
+                                    <div class="ml-4 w-5 h-5 border-2 border-[#3E3E3A] rounded-full peer-checked:border-[#F53003] peer-checked:bg-[#F53003] flex items-center justify-center">
+                                        <div class="w-2 h-2 bg-[#F53003] rounded-full hidden peer-checked:block"></div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
                         <div>
                             <label for="name" class="block text-sm font-medium text-[#EDEDEC] mb-2">Nama Lengkap</label>
                             <input id="name" name="name" type="text" autocomplete="name" required 

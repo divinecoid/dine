@@ -14,7 +14,18 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [RegistrationController::class, 'store'])->name('register.store');
+
+// Registration flow routes
+Route::prefix('registration')->name('registration.')->group(function () {
+    Route::get('/verify/{registration}', [RegistrationController::class, 'showVerify'])->name('verify');
+    Route::post('/verify/{registration}', [RegistrationController::class, 'verifyOTP'])->name('verify.otp');
+    Route::post('/resend-otp/{registration}', [RegistrationController::class, 'resendOTP'])->name('resend-otp');
+    Route::get('/payment/{registration}', [RegistrationController::class, 'showPayment'])->name('payment');
+    Route::get('/payment/{registration}/generate', [RegistrationController::class, 'generatePayment'])->name('payment.generate');
+    Route::get('/payment/{registration}/status', [RegistrationController::class, 'checkPaymentStatus'])->name('payment.status');
+    Route::post('/complete/{registration}', [RegistrationController::class, 'completeRegistration'])->name('complete');
+});
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Admin Routes (Protected)
@@ -49,6 +60,18 @@ Route::prefix('orders')->name('public.orders.')->group(function () {
     Route::get('/', [PublicOrderController::class, 'index'])->name('index');
     // Close all orders for table
     Route::post('/close-table', [PublicOrderController::class, 'closeTable'])->name('close-table');
+    // Generate QRIS for payment
+    Route::get('/{orderNumber}/qris', [PublicOrderController::class, 'generateQRIS'])
+        ->where('orderNumber', '[A-Z0-9-]+')
+        ->name('qris');
+    // Check payment status
+    Route::get('/{orderNumber}/payment-status', [PublicOrderController::class, 'checkPaymentStatus'])
+        ->where('orderNumber', '[A-Z0-9-]+')
+        ->name('payment-status');
+    // Process payment for order
+    Route::post('/{orderNumber}/pay', [PublicOrderController::class, 'processPayment'])
+        ->where('orderNumber', '[A-Z0-9-]+')
+        ->name('pay');
     // Order detail by order number
     Route::get('/{orderNumber}', [PublicOrderController::class, 'show'])
         ->where('orderNumber', '[A-Z0-9-]+')

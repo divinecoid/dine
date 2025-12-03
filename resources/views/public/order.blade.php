@@ -249,36 +249,137 @@
         </div>
         @endif
 
+        <!-- Payment Button -->
+        @php
+            $totalPaid = $order->payments()->where('status', 'completed')->sum('amount');
+            $remainingAmount = $order->total_amount - $totalPaid;
+            $canPay = $order->status !== 'cancelled' && !$order->isClosed() && $remainingAmount > 0;
+        @endphp
+        @if($canPay)
+        <div class="bg-[#161615] rounded-lg border border-[#3E3E3A] p-4 mb-4">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h2 class="text-lg font-semibold text-[#EDEDEC]">Pembayaran</h2>
+                    @if($totalPaid > 0)
+                        <p class="text-sm text-[#A1A09A] mt-1">
+                            Sudah dibayar: <span class="text-green-400 font-medium">Rp {{ number_format($totalPaid, 0, ',', '.') }}</span>
+                        </p>
+                    @endif
+                    <p class="text-sm text-[#A1A09A] mt-1">
+                        Sisa: <span class="text-[#EDEDEC] font-semibold">Rp {{ number_format($remainingAmount, 0, ',', '.') }}</span>
+                    </p>
+                </div>
+                <button type="button" 
+                        onclick="showPaymentModal()"
+                        class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors">
+                    Bayar
+                </button>
+            </div>
+        </div>
+        @endif
+
         <!-- Action Buttons -->
-        <div class="flex flex-col md:flex-row gap-3">
+        <div class="flex flex-col gap-3">
             @if($order->status !== 'cancelled' && $order->status !== 'completed')
                 @if($order->canBeCancelled())
                     <button type="button" 
                             onclick="cancelOrder('{{ $order->order_number }}')"
-                            class="w-full md:flex-1 px-4 py-3 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
+                            class="w-full px-4 py-3 bg-red-600/20 border border-red-600/50 text-red-400 font-semibold rounded-lg hover:bg-red-600/30 hover:border-red-600/70 transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
                         Batalkan Pesanan
                     </button>
                 @endif
             @endif
             
-            @if(isset($tableIdentifier))
-                <a href="{{ route('public.orders.index', ['table' => $tableIdentifier]) }}" 
-                   class="w-full md:flex-1 px-4 py-3 bg-[#3E3E3A] text-white font-semibold rounded-lg hover:bg-[#2a2a28] transition-colors text-center">
-                    Kembali ke Daftar Pesanan
-                </a>
-            @endif
-            
             @if($order->brand && $order->brand->slug && isset($tableIdentifier))
                 <a href="{{ route('public.menu', ['brandSlug' => $order->brand->slug, 'table' => $tableIdentifier]) }}" 
-                   class="w-full md:flex-1 px-4 py-3 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors text-center">
+                   class="w-full px-4 py-3 bg-[#161615] border border-[#3E3E3A] text-[#EDEDEC] font-semibold rounded-lg hover:bg-[#0a0a0a] hover:border-[#4a4a46] transition-all text-center flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
                     Kembali ke Menu
                 </a>
             @elseif(!isset($tableIdentifier))
                 <a href="/" 
-                   class="w-full md:flex-1 px-4 py-3 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors text-center">
+                   class="w-full px-4 py-3 bg-[#161615] border border-[#3E3E3A] text-[#EDEDEC] font-semibold rounded-lg hover:bg-[#0a0a0a] hover:border-[#4a4a46] transition-all text-center flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
                     Kembali ke Beranda
                 </a>
             @endif
+        </div>
+    </div>
+</div>
+
+<!-- Payment QRIS Modal -->
+<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-[#EDEDEC]">Pembayaran QRIS</h3>
+            <button type="button" 
+                    onclick="closePaymentModal()"
+                    class="text-[#A1A09A] hover:text-[#EDEDEC]">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="space-y-4">
+            <!-- Payment Info -->
+            <div class="bg-[#0a0a0a] border border-[#3E3E3A] rounded-lg px-4 py-3">
+                <div class="text-center">
+                    <p class="text-sm text-[#A1A09A] mb-1">Total Pembayaran</p>
+                    <p class="text-2xl font-bold text-[#EDEDEC]">Rp {{ number_format($remainingAmount, 0, ',', '.') }}</p>
+                    @if($totalPaid > 0)
+                        <p class="text-xs text-[#A1A09A] mt-1">
+                            Sudah dibayar: <span class="text-green-400">Rp {{ number_format($totalPaid, 0, ',', '.') }}</span>
+                        </p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- QRIS Display -->
+            <div class="bg-white rounded-lg p-6 flex flex-col items-center">
+                <div class="mb-4 flex items-center justify-center min-h-[256px]">
+                    <img id="qrisImage" src="" alt="QRIS" class="w-64 h-64 mx-auto border-2 border-gray-200 rounded-lg object-contain">
+                </div>
+                <div class="text-center">
+                    <p class="text-sm font-semibold text-gray-700 mb-1">Scan QRIS dengan aplikasi e-wallet Anda</p>
+                    <p class="text-xs text-gray-500">Order: <span class="font-medium">{{ $order->order_number }}</span></p>
+                    <p class="text-xs text-gray-500 mt-1">Gunakan aplikasi seperti GoPay, OVO, DANA, LinkAja, atau aplikasi bank</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-3">
+                <button type="button" 
+                        onclick="checkPaymentStatus()"
+                        class="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Cek Status Pembayaran
+                </button>
+                
+                <button type="button" 
+                        onclick="downloadQRIS()"
+                        class="w-full px-4 py-3 bg-[#3E3E3A] text-white font-semibold rounded-lg hover:bg-[#2a2a28] transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Download QRIS
+                </button>
+            </div>
+
+            <button type="button" 
+                    onclick="closePaymentModal()"
+                    class="w-full px-4 py-3 border border-[#3E3E3A] text-[#EDEDEC] font-semibold rounded-lg hover:bg-[#0a0a0a] transition-colors">
+                Tutup
+            </button>
         </div>
     </div>
 </div>
@@ -353,6 +454,133 @@
     const orderId = @json($order->id);
     const tableIdentifier = @json($tableIdentifier ?? null);
     const brandSlug = @json($order->brand && $order->brand->slug ? $order->brand->slug : null);
+    const remainingAmount = @json($remainingAmount);
+
+    // Payment Modal Functions
+    let qrisUrl = null;
+    let qrisData = null;
+
+    async function showPaymentModal() {
+        const modal = document.getElementById('paymentModal');
+        const qrisImage = document.getElementById('qrisImage');
+        
+        // Show modal
+        modal.classList.remove('hidden');
+        
+        // Show loading state
+        qrisImage.src = '';
+        qrisImage.alt = 'Loading QRIS...';
+        qrisImage.classList.add('animate-pulse');
+        qrisImage.classList.add('bg-gray-200');
+        
+        try {
+            // Generate QRIS
+            const url = `/orders/${orderNumber}/qris${tableIdentifier ? '?table=' + encodeURIComponent(tableIdentifier) : ''}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                }
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                qrisUrl = data.data.qris_url;
+                qrisData = data.data.qris_data;
+                
+                // Set QRIS image
+                qrisImage.src = qrisUrl;
+                qrisImage.alt = 'QRIS';
+                qrisImage.classList.remove('animate-pulse');
+                qrisImage.classList.remove('bg-gray-200');
+            } else {
+                showAlert('error', 'Gagal', data.message || 'Gagal memuat QRIS');
+                closePaymentModal();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('error', 'Error', 'Terjadi kesalahan saat memuat QRIS. Silakan coba lagi.');
+            closePaymentModal();
+        }
+    }
+
+    function closePaymentModal() {
+        document.getElementById('paymentModal').classList.add('hidden');
+        qrisUrl = null;
+        qrisData = null;
+    }
+
+    async function checkPaymentStatus() {
+        try {
+            const url = `/orders/${orderNumber}/payment-status${tableIdentifier ? '?table=' + encodeURIComponent(tableIdentifier) : ''}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                }
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                if (data.data.is_paid) {
+                    showAlert('success', 'Pembayaran Berhasil', 'Pembayaran Anda telah dikonfirmasi. Terima kasih!', function() {
+                        window.location.reload();
+                    });
+                } else {
+                    showAlert('info', 'Belum Dibayar', `Sisa pembayaran: Rp ${parseInt(data.data.remaining_amount).toLocaleString('id-ID')}`);
+                }
+            } else {
+                showAlert('error', 'Gagal', data.message || 'Gagal mengecek status pembayaran');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('error', 'Error', 'Terjadi kesalahan saat mengecek status pembayaran. Silakan coba lagi.');
+        }
+    }
+
+    async function downloadQRIS() {
+        if (!qrisUrl) {
+            showAlert('error', 'Error', 'QRIS belum dimuat. Silakan tutup dan buka kembali modal pembayaran.');
+            return;
+        }
+
+        try {
+            // Fetch the QRIS image as blob
+            const response = await fetch(qrisUrl);
+            const blob = await response.blob();
+            
+            // Create object URL
+            const url = window.URL.createObjectURL(blob);
+            
+            // Create a temporary link to download the image
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `QRIS-${orderNumber}-${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            
+            // Cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading QRIS:', error);
+            // Fallback: open in new tab
+            window.open(qrisUrl, '_blank');
+        }
+    }
+
+    // Close payment modal when clicking outside
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentModal();
+            }
+        });
+    });
 
     function cancelOrder(orderNumber) {
         // Show cancel order confirmation modal
@@ -383,7 +611,7 @@
             const data = await response.json();
             
             if (data.success) {
-                showAlert('success', 'Berhasil', 'Pesanan berhasil dibatalkan', function() {
+                showAlert('cancel', 'Berhasil', 'Pesanan berhasil dibatalkan', function() {
                     // Redirect to menu with table parameter if available
                     if (brandSlug && tableIdentifier) {
                         window.location.href = '/' + brandSlug + '?table=' + encodeURIComponent(tableIdentifier);
@@ -481,6 +709,13 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
             `;
+        } else if (type === 'cancel') {
+            iconBgClass = 'bg-[#F53003]/20';
+            iconHtml = `
+                <svg class="w-8 h-8 text-[#F53003]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            `;
         } else if (type === 'error') {
             iconBgClass = 'bg-[#F53003]/20';
             iconHtml = `
@@ -506,7 +741,7 @@
         // Set button color based on type
         if (type === 'success') {
             buttonElement.className = 'w-full px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors';
-        } else if (type === 'error') {
+        } else if (type === 'cancel' || type === 'error') {
             buttonElement.className = 'w-full px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors';
         } else {
             buttonElement.className = 'w-full px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors';

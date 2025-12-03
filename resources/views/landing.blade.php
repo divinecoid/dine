@@ -173,6 +173,272 @@
             </div>
         </section>
 
+        <!-- Pricing Section -->
+        <section class="max-w-6xl mx-auto px-6 lg:px-10 py-16 lg:py-20">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl lg:text-3xl font-bold mb-4 text-[#EDEDEC]">
+                    💳 Pilih Paket yang Tepat untuk Bisnis Anda
+                </h2>
+                <p class="text-sm lg:text-base text-[#A1A09A] max-w-xl mx-auto leading-relaxed">
+                    Mulai gratis atau tingkatkan ke paket premium untuk fitur lengkap
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                <!-- CORE Package -->
+                <div class="relative bg-[#161615] border border-[#3E3E3A] rounded-xl p-6 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-green-500/10 flex flex-col">
+                    <div class="absolute top-0 right-0 bg-green-500 text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold z-10">
+                        GRATIS
+                    </div>
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                                <h3 class="text-xl font-bold text-[#EDEDEC]">CORE</h3>
+                            </div>
+                            <div class="w-16"></div>
+                        </div>
+                        <p class="text-xs text-[#A1A09A] mb-4 leading-relaxed">Fondasi untuk memulai</p>
+                        <div class="mb-5">
+                            <span class="text-3xl font-bold text-[#EDEDEC]">Rp 0</span>
+                            <span class="text-sm text-[#A1A09A] ml-1">/ bulan</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 mb-6 flex-grow">
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">QR Table Order (unlimited)</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">POS / Kasir dasar</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Manajemen produk sederhana</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Laporan penjualan harian & bulanan</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">1 Store</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">1 Device</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">URL default (subdomain)</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Support FAQ / komunitas</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-green-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">QRIS Dinamis</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-[#3E3E3A] pt-5 mb-5">
+                        <p class="text-xs font-semibold text-[#A1A09A] mb-3">Tidak termasuk:</p>
+                        <div class="space-y-2">
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-red-500 text-base flex-shrink-0 mt-0.5">✖</span>
+                                <span class="text-xs text-[#A1A09A] leading-relaxed">Custom domain</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-red-500 text-base flex-shrink-0 mt-0.5">✖</span>
+                                <span class="text-xs text-[#A1A09A] leading-relaxed">Multi user</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-red-500 text-base flex-shrink-0 mt-0.5">✖</span>
+                                <span class="text-xs text-[#A1A09A] leading-relaxed">Multi outlet</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-red-500 text-base flex-shrink-0 mt-0.5">✖</span>
+                                <span class="text-xs text-[#A1A09A] leading-relaxed">Laporan keuangan lengkap</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-red-500 text-base flex-shrink-0 mt-0.5">✖</span>
+                                <span class="text-xs text-[#A1A09A] leading-relaxed">Branding custom</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-[#A1A09A] italic mb-5 mt-auto leading-relaxed">Cocok untuk: kedai kecil & UMKM yang ingin mulai digitalisasi tanpa biaya.</p>
+
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 bg-green-500/20 border border-green-500/50 text-green-400 text-xs font-semibold rounded-lg hover:bg-green-500/30 hover:border-green-500/70 transition-colors">
+                            Mulai Gratis
+                        </a>
+                    @endif
+                </div>
+
+                <!-- SCALE Package -->
+                <div class="relative bg-[#161615] border-2 border-[#F53003]/50 rounded-xl p-6 hover:border-[#F53003] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#F53003]/20 flex flex-col">
+                    <div class="absolute top-0 right-0 bg-[#F53003] text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold z-10">
+                        POPULER
+                    </div>
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                                <h3 class="text-xl font-bold text-[#EDEDEC]">SCALE</h3>
+                            </div>
+                            <div class="w-20"></div>
+                        </div>
+                        <p class="text-xs text-[#A1A09A] mb-4 leading-relaxed">Power-up untuk bisnis yang sedang berkembang</p>
+                        <div class="mb-5">
+                            <span class="text-3xl font-bold text-[#EDEDEC]">Rp 149.000</span>
+                            <span class="text-[#A1A09A]"> – </span>
+                            <span class="text-3xl font-bold text-[#EDEDEC]">199.000</span>
+                            <span class="text-sm text-[#A1A09A] ml-1">/ bulan</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 mb-6 flex-grow">
+                        <p class="text-xs font-semibold text-[#F53003] mb-3">Semua fitur CORE, plus:</p>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Custom Domain Gratis</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Branding custom (logo, tema, warna)</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Multi User (Admin, Kasir, Supervisor)</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Multi Device</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Laporan keuangan lengkap</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Laporan per brand & per store</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Stok lanjutan + alert stok menipis</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">QRIS Dinamis via API</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Promo, diskon, voucher</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Export PDF & Excel</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-blue-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Priority Support (jam kerja)</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-[#A1A09A] italic mb-5 mt-auto leading-relaxed">Cocok untuk: cafe/resto menengah, franchise kecil, dan bisnis yang butuh laporan profesional.</p>
+
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 bg-[#F53003] text-white text-xs font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
+                            Mulai Sekarang
+                        </a>
+                    @endif
+                </div>
+
+                <!-- INFINITE Package -->
+                <div class="relative bg-[#161615] border border-[#3E3E3A] rounded-xl p-6 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10 flex flex-col">
+                    <div class="absolute top-0 right-0 bg-orange-500 text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold z-10">
+                        PREMIUM
+                    </div>
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
+                                <h3 class="text-xl font-bold text-[#EDEDEC]">INFINITE</h3>
+                            </div>
+                            <div class="w-20"></div>
+                        </div>
+                        <p class="text-xs text-[#A1A09A] mb-4 leading-relaxed">Kekuatan penuh tanpa batas</p>
+                        <div class="mb-5">
+                            <span class="text-3xl font-bold text-[#EDEDEC]">Rp 499.000</span>
+                            <span class="text-[#A1A09A]"> – </span>
+                            <span class="text-3xl font-bold text-[#EDEDEC]">1.500.000</span>
+                            <span class="text-sm text-[#A1A09A] ml-1">/ bulan</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 mb-6 flex-grow">
+                        <p class="text-xs font-semibold text-orange-500 mb-3">Semua fitur SCALE, plus:</p>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Custom Domain + Full White-Label</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Multi Store tanpa batas</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Multi Brand Management</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Advanced Owner Dashboard</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">API Access</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Shift & Payroll Module (opsional)</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Integrasi Akuntansi (Jurnal, Accurate, dsb.)</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Dedicated Account Manager</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Onboarding & training</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">SLA & 24/7 Premium Support</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-orange-500 text-base flex-shrink-0 mt-0.5">✔</span>
+                            <span class="text-xs text-[#EDEDEC] leading-relaxed">Custom Workflow (approval, settlement, dsb.)</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-[#A1A09A] italic mb-5 mt-auto leading-relaxed">Cocok untuk: grup F&B, chain resto besar, dan brand multi-outlet.</p>
+
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 bg-orange-500/20 border border-orange-500/50 text-orange-400 text-xs font-semibold rounded-lg hover:bg-orange-500/30 hover:border-orange-500/70 transition-colors">
+                            Hubungi Sales
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </section>
+
         <!-- CTA Section -->
         <section class="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-20">
             <div class="bg-[#F53003] rounded-2xl p-8 lg:p-12 text-center">

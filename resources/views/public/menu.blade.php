@@ -446,7 +446,35 @@
             return;
         }
 
-        // Show customer info modal
+        // Check if there's an incomplete order for this table
+        if (tableId) {
+            try {
+                const checkResponse = await fetch(`/api/v1/orders/check-incomplete?mdx_table_id=${tableId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    }
+                });
+
+                const checkData = await checkResponse.json();
+                
+                if (checkData.success && checkData.has_incomplete_order) {
+                    // Use existing customer info and proceed directly to checkout
+                    const customerName = checkData.data.customer_name;
+                    const customerPhone = checkData.data.customer_phone || null;
+                    
+                    // Proceed with checkout without showing customer modal
+                    await processCheckout(customerName, customerPhone);
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking incomplete order:', error);
+                // If check fails, proceed with normal flow (show customer modal)
+            }
+        }
+
+        // Show customer info modal if no incomplete order found
         showCustomerModal();
     }
 
@@ -484,6 +512,25 @@
     }
 
     async function processCheckout(customerName, customerPhone) {
+        // Build request body
+        const requestBody = {
+            mdx_store_id: storeId,
+            mdx_brand_id: brandId,
+            mdx_table_id: tableId,
+            order_type: 'dine_in',
+            items: cart.map(item => ({
+                mdx_menu_id: item.menu_id,
+                quantity: item.quantity
+            }))
+        };
+
+        // Only include customer info if provided (for new orders)
+        if (customerName) {
+            requestBody.customer_name = customerName;
+        }
+        if (customerPhone) {
+            requestBody.customer_phone = customerPhone;
+        }
 
         try {
             const response = await fetch('/api/v1/orders', {
@@ -493,18 +540,7 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    mdx_store_id: storeId,
-                    mdx_brand_id: brandId,
-                    mdx_table_id: tableId,
-                    order_type: 'dine_in',
-                    customer_name: customerName,
-                    customer_phone: customerPhone,
-                    items: cart.map(item => ({
-                        mdx_menu_id: item.menu_id,
-                        quantity: item.quantity
-                    }))
-                })
+                body: JSON.stringify(requestBody)
             });
 
             const data = await response.json();
