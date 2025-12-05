@@ -21,8 +21,8 @@ class EnsureAdminRole
 
         $user = auth()->user();
         
-        // Check if user has valid role (brand_owner or store_manager)
-        if (!in_array($user->role, ['brand_owner', 'store_manager'])) {
+        // Check if user has valid role (brand_owner, store_manager, or kasir)
+        if (!in_array($user->role, ['brand_owner', 'store_manager', 'kasir'])) {
             auth()->logout();
             return redirect()->route('login')->with('error', 'Anda tidak memiliki akses ke dashboard admin.');
         }

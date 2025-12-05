@@ -32,6 +32,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.role'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
+    // Kasir Routes
+    Route::get('/kasir', [\App\Http\Controllers\Admin\KasirController::class, 'index'])->name('kasir.index');
+    Route::post('/kasir/order', [\App\Http\Controllers\Admin\KasirController::class, 'store'])->name('kasir.order.store');
+    Route::post('/kasir/order/{order}/payment', [\App\Http\Controllers\Admin\KasirController::class, 'processPayment'])->name('kasir.order.payment');
+    Route::post('/kasir/order/{order}/complete', [\App\Http\Controllers\Admin\KasirController::class, 'completeOrder'])->name('kasir.order.complete');
+    
     // CRUD Routes
     Route::resource('brands', \App\Http\Controllers\Admin\BrandController::class);
     Route::resource('stores', \App\Http\Controllers\Admin\StoreController::class);
