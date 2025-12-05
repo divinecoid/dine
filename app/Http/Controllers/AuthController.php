@@ -90,14 +90,25 @@ class AuthController extends Controller
     /**
      * Show the registration form.
      */
-    public function showRegisterForm()
+    public function showRegisterForm(Request $request)
     {
         // Redirect to dashboard if already authenticated
         if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
         
-        return view('auth.register');
+        // Get package parameter from query string
+        $package = $request->query('package');
+        
+        // Validate package parameter
+        $validPackages = ['CORE', 'SCALE', 'INFINITE'];
+        if ($package && in_array(strtoupper($package), $validPackages)) {
+            $package = strtoupper($package);
+        } else {
+            $package = null;
+        }
+        
+        return view('auth.register', ['selectedPackage' => $package]);
     }
 
     /**

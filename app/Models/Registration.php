@@ -70,8 +70,8 @@ class Registration extends Model
     public static function getPaymentAmount(string $accountType): float
     {
         return match($accountType) {
-            'SCALE' => 100000, // Rp 100.000
-            'INFINITE' => 500000, // Rp 500.000
+            'SCALE' => 99000, // Rp 99.000
+            'INFINITE' => 499000, // Rp 499.000
             default => 0,
         };
     }

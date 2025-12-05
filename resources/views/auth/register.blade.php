@@ -59,6 +59,30 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Package Selection Glow Effect */
+        .package-option:has(input[type="radio"]:checked) {
+            border-color: #F53003 !important;
+            box-shadow: 0 0 0 3px rgba(245, 48, 3, 0.15), 0 0 20px rgba(245, 48, 3, 0.3), 0 0 40px rgba(245, 48, 3, 0.1) !important;
+            background-color: #0f0f0f !important;
+        }
+        
+        .package-option:has(input[type="radio"]:checked):hover {
+            border-color: #F53003 !important;
+            box-shadow: 0 0 0 3px rgba(245, 48, 3, 0.2), 0 0 25px rgba(245, 48, 3, 0.4), 0 0 50px rgba(245, 48, 3, 0.15) !important;
+        }
+        
+        /* Fallback using peer-checked for better browser support */
+        .package-option input[type="radio"]:checked + .flex-1 {
+            /* Content styling if needed */
+        }
+        
+        /* Additional glow effect using JavaScript fallback */
+        .package-option.selected {
+            border-color: #F53003 !important;
+            box-shadow: 0 0 0 3px rgba(245, 48, 3, 0.15), 0 0 20px rgba(245, 48, 3, 0.3), 0 0 40px rgba(245, 48, 3, 0.1) !important;
+            background-color: #0f0f0f !important;
+        }
     </style>
 </head>
 <body class="bg-[#0a0a0a] text-[#EDEDEC]">
@@ -106,8 +130,8 @@
                         <div>
                             <label class="block text-sm font-medium text-[#EDEDEC] mb-3">Pilih Tipe Akun <span class="text-[#F53003]">*</span></label>
                             <div class="grid grid-cols-1 gap-3">
-                                <label class="relative flex items-center p-4 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-lg cursor-pointer hover:border-[#F53003]/50 transition-colors">
-                                    <input type="radio" name="account_type" value="CORE" required class="sr-only peer" {{ old('account_type') === 'CORE' ? 'checked' : '' }}>
+                                <label class="package-option relative flex items-center p-5 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-xl cursor-pointer hover:border-[#F53003]/50 transition-all duration-300">
+                                    <input type="radio" name="account_type" value="CORE" required class="sr-only peer" {{ old('account_type') === 'CORE' || (isset($selectedPackage) && $selectedPackage === 'CORE') ? 'checked' : '' }}>
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between mb-1">
                                             <span class="text-base font-semibold text-[#EDEDEC]">CORE</span>
@@ -115,36 +139,27 @@
                                         </div>
                                         <p class="text-xs text-[#A1A09A]">Paket dasar untuk memulai bisnis Anda</p>
                                     </div>
-                                    <div class="ml-4 w-5 h-5 border-2 border-[#3E3E3A] rounded-full peer-checked:border-[#F53003] peer-checked:bg-[#F53003] flex items-center justify-center">
-                                        <div class="w-2 h-2 bg-[#F53003] rounded-full hidden peer-checked:block"></div>
-                                    </div>
                                 </label>
                                 
-                                <label class="relative flex items-center p-4 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-lg cursor-pointer hover:border-[#F53003]/50 transition-colors">
-                                    <input type="radio" name="account_type" value="SCALE" required class="sr-only peer" {{ old('account_type') === 'SCALE' ? 'checked' : '' }}>
+                                <label class="package-option relative flex items-center p-5 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-xl cursor-pointer hover:border-[#F53003]/50 transition-all duration-300">
+                                    <input type="radio" name="account_type" value="SCALE" required class="sr-only peer" {{ old('account_type') === 'SCALE' || (isset($selectedPackage) && $selectedPackage === 'SCALE') ? 'checked' : '' }}>
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between mb-1">
                                             <span class="text-base font-semibold text-[#EDEDEC]">SCALE</span>
-                                            <span class="text-sm font-bold text-[#F53003]">Rp 100.000</span>
+                                            <span class="text-sm font-bold text-[#EDEDEC]">Rp 99.000</span>
                                         </div>
                                         <p class="text-xs text-[#A1A09A]">Paket untuk bisnis yang berkembang</p>
                                     </div>
-                                    <div class="ml-4 w-5 h-5 border-2 border-[#3E3E3A] rounded-full peer-checked:border-[#F53003] peer-checked:bg-[#F53003] flex items-center justify-center">
-                                        <div class="w-2 h-2 bg-[#F53003] rounded-full hidden peer-checked:block"></div>
-                                    </div>
                                 </label>
                                 
-                                <label class="relative flex items-center p-4 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-lg cursor-pointer hover:border-[#F53003]/50 transition-colors">
-                                    <input type="radio" name="account_type" value="INFINITE" required class="sr-only peer" {{ old('account_type') === 'INFINITE' ? 'checked' : '' }}>
+                                <label class="package-option relative flex items-center p-5 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-xl cursor-pointer hover:border-[#F53003]/50 transition-all duration-300">
+                                    <input type="radio" name="account_type" value="INFINITE" required class="sr-only peer" {{ old('account_type') === 'INFINITE' || (isset($selectedPackage) && $selectedPackage === 'INFINITE') ? 'checked' : '' }}>
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between mb-1">
                                             <span class="text-base font-semibold text-[#EDEDEC]">INFINITE</span>
-                                            <span class="text-sm font-bold text-[#F53003]">Rp 500.000</span>
+                                            <span class="text-sm font-bold text-[#EDEDEC]">Rp 499.000</span>
                                         </div>
                                         <p class="text-xs text-[#A1A09A]">Paket lengkap untuk bisnis besar</p>
-                                    </div>
-                                    <div class="ml-4 w-5 h-5 border-2 border-[#3E3E3A] rounded-full peer-checked:border-[#F53003] peer-checked:bg-[#F53003] flex items-center justify-center">
-                                        <div class="w-2 h-2 bg-[#F53003] rounded-full hidden peer-checked:block"></div>
                                     </div>
                                 </label>
                             </div>
@@ -212,6 +227,30 @@
         const indicator = document.getElementById('pullRefreshIndicator');
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Package selection glow effect
+            const packageOptions = document.querySelectorAll('.package-option');
+            const radioInputs = document.querySelectorAll('.package-option input[type="radio"]');
+            
+            // Function to update selected state
+            function updateSelectedState() {
+                packageOptions.forEach(option => {
+                    const radio = option.querySelector('input[type="radio"]');
+                    if (radio && radio.checked) {
+                        option.classList.add('selected');
+                    } else {
+                        option.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // Initialize selected state on page load
+            updateSelectedState();
+            
+            // Add event listeners to radio inputs
+            radioInputs.forEach(radio => {
+                radio.addEventListener('change', updateSelectedState);
+            });
+            
             // Touch start - detect pull from top
             document.addEventListener('touchstart', function(e) {
                 // Only allow pull from top of screen (scroll position at top)

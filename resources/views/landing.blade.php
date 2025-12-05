@@ -44,10 +44,13 @@
                 @media (min-width: 768px) {
                     .pricing-container {
                         flex-direction: row !important;
+                        align-items: stretch !important;
                     }
                     .pricing-card {
                         flex: 1;
                         max-width: calc(50% - 0.75rem);
+                        display: flex;
+                        flex-direction: column;
                     }
                 }
                 @media (min-width: 1024px) {
@@ -210,16 +213,15 @@
             <div class="pricing-container flex flex-col md:flex-row lg:flex-row items-stretch justify-center gap-6 lg:gap-8">
                 <!-- CORE Package -->
                 <div class="pricing-card relative bg-[#161615] border border-[#3E3E3A] rounded-xl p-6 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-green-500/10 flex flex-col w-full">
-                    <div class="absolute top-0 right-0 bg-green-500 text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold z-10">
-                        GRATIS
-                    </div>
                     <div class="mb-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-2.5">
+                        <div class="flex items-start justify-between mb-3 relative">
+                            <div class="flex items-center gap-2.5 flex-1">
                                 <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
                                 <h3 class="text-xl font-bold text-[#EDEDEC]">CORE</h3>
                             </div>
-                            <div class="w-16"></div>
+                            <div class="bg-green-500 text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold ml-2 flex-shrink-0">
+                                GRATIS
+                            </div>
                         </div>
                         <p class="text-xs text-[#A1A09A] mb-4 leading-relaxed">Fondasi untuk memulai</p>
                         <div class="mb-5">
@@ -293,10 +295,10 @@
                         </div>
                     </div>
 
-                    <p class="text-xs text-[#A1A09A] italic mb-5 mt-auto leading-relaxed">Cocok untuk: kedai kecil & UMKM yang ingin mulai digitalisasi tanpa biaya.</p>
+                    <p class="text-xs text-[#A1A09A] italic mb-5 leading-relaxed">Cocok untuk: kedai kecil & UMKM yang ingin mulai digitalisasi tanpa biaya.</p>
 
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 bg-green-500/20 border border-green-500/50 text-green-400 text-xs font-semibold rounded-lg hover:bg-green-500/30 hover:border-green-500/70 transition-colors">
+                        <a href="{{ route('register', ['package' => 'CORE']) }}" class="block w-full text-center px-6 py-3 bg-[#F53003] text-white text-sm font-semibold rounded-xl hover:bg-[#d42800] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#F53003]/20 mt-auto">
                             Mulai Gratis
                         </a>
                     @endif
@@ -304,22 +306,19 @@
 
                 <!-- SCALE Package -->
                 <div class="pricing-card relative bg-[#161615] border-2 border-[#F53003]/50 rounded-xl p-6 hover:border-[#F53003] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#F53003]/20 flex flex-col w-full">
-                    <div class="absolute top-0 right-0 bg-[#F53003] text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold z-10">
-                        POPULER
-                    </div>
                     <div class="mb-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-2.5">
+                        <div class="flex items-start justify-between mb-3 relative">
+                            <div class="flex items-center gap-2.5 flex-1">
                                 <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
                                 <h3 class="text-xl font-bold text-[#EDEDEC]">SCALE</h3>
                             </div>
-                            <div class="w-20"></div>
+                            <div class="bg-[#F53003] text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold ml-2 flex-shrink-0">
+                                POPULER
+                            </div>
                         </div>
                         <p class="text-xs text-[#A1A09A] mb-4 leading-relaxed">Power-up untuk bisnis yang sedang berkembang</p>
                         <div class="mb-5">
-                            <span class="text-3xl font-bold text-[#EDEDEC]">Rp 149.000</span>
-                            <span class="text-[#A1A09A]"> – </span>
-                            <span class="text-3xl font-bold text-[#EDEDEC]">199.000</span>
+                            <span class="text-3xl font-bold text-[#EDEDEC]">Rp 99.000</span>
                             <span class="text-sm text-[#A1A09A] ml-1">/ bulan</span>
                         </div>
                     </div>
@@ -372,10 +371,10 @@
                         </div>
                     </div>
 
-                    <p class="text-xs text-[#A1A09A] italic mb-5 mt-auto leading-relaxed">Cocok untuk: cafe/resto menengah, franchise kecil, dan bisnis yang butuh laporan profesional.</p>
+                    <p class="text-xs text-[#A1A09A] italic mb-5 leading-relaxed">Cocok untuk: cafe/resto menengah, franchise kecil, dan bisnis yang butuh laporan profesional.</p>
 
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 bg-[#F53003] text-white text-xs font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
+                        <a href="{{ route('register', ['package' => 'SCALE']) }}" class="block w-full text-center px-6 py-3 bg-[#F53003] text-white text-sm font-semibold rounded-xl hover:bg-[#d42800] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#F53003]/20 mt-auto">
                             Mulai Sekarang
                         </a>
                     @endif
@@ -383,22 +382,19 @@
 
                 <!-- INFINITE Package -->
                 <div class="pricing-card relative bg-[#161615] border border-[#3E3E3A] rounded-xl p-6 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10 flex flex-col w-full">
-                    <div class="absolute top-0 right-0 bg-orange-500 text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold z-10">
-                        PREMIUM
-                    </div>
                     <div class="mb-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-2.5">
+                        <div class="flex items-start justify-between mb-3 relative">
+                            <div class="flex items-center gap-2.5 flex-1">
                                 <div class="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
                                 <h3 class="text-xl font-bold text-[#EDEDEC]">INFINITE</h3>
                             </div>
-                            <div class="w-20"></div>
+                            <div class="bg-orange-500 text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold ml-2 flex-shrink-0">
+                                PREMIUM
+                            </div>
                         </div>
                         <p class="text-xs text-[#A1A09A] mb-4 leading-relaxed">Kekuatan penuh tanpa batas</p>
                         <div class="mb-5">
                             <span class="text-3xl font-bold text-[#EDEDEC]">Rp 499.000</span>
-                            <span class="text-[#A1A09A]"> – </span>
-                            <span class="text-3xl font-bold text-[#EDEDEC]">1.500.000</span>
                             <span class="text-sm text-[#A1A09A] ml-1">/ bulan</span>
                         </div>
                     </div>
@@ -451,11 +447,11 @@
                         </div>
                     </div>
 
-                    <p class="text-xs text-[#A1A09A] italic mb-5 mt-auto leading-relaxed">Cocok untuk: grup F&B, chain resto besar, dan brand multi-outlet.</p>
+                    <p class="text-xs text-[#A1A09A] italic mb-5 leading-relaxed">Cocok untuk: grup F&B, chain resto besar, dan brand multi-outlet.</p>
 
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="block w-full text-center px-5 py-2.5 bg-orange-500/20 border border-orange-500/50 text-orange-400 text-xs font-semibold rounded-lg hover:bg-orange-500/30 hover:border-orange-500/70 transition-colors">
-                            Hubungi Sales
+                        <a href="{{ route('register', ['package' => 'INFINITE']) }}" class="block w-full text-center px-6 py-3 bg-[#F53003] text-white text-sm font-semibold rounded-xl hover:bg-[#d42800] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#F53003]/20 mt-auto">
+                            Mulai Sekarang
                         </a>
                     @endif
                 </div>
