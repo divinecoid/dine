@@ -160,7 +160,7 @@
                                         </div>
                                         <div class="p-3">
                                             <h3 class="text-sm font-semibold text-[#EDEDEC] mb-1 line-clamp-2">{{ $menu->name }}</h3>
-                                            <p class="text-lg font-bold text-[#F53003]">Rp {{ number_format($menu->price, 0, ',', '.') }}</p>
+                                            <p class="text-lg font-bold text-[#EDEDEC]">Rp {{ number_format($menu->price, 0, ',', '.') }}</p>
                                         </div>
                                     </div>
                                 @endforeach
@@ -371,6 +371,28 @@
     #payment-modal .relative {
         pointer-events: auto;
     }
+
+    /* Custom Scrollbar for Order Summary */
+    #cart-items::-webkit-scrollbar {
+        width: 6px;
+    }
+    #cart-items::-webkit-scrollbar-track {
+        background: #0a0a0a;
+        border-radius: 3px;
+    }
+    #cart-items::-webkit-scrollbar-thumb {
+        background: #3E3E3A;
+        border-radius: 3px;
+    }
+    #cart-items::-webkit-scrollbar-thumb:hover {
+        background: #4a4a46;
+    }
+    
+    /* Firefox scrollbar */
+    #cart-items {
+        scrollbar-width: thin;
+        scrollbar-color: #3E3E3A #0a0a0a;
+    }
 </style>
 @endpush
 
@@ -479,7 +501,7 @@
                         ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.menuName}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">` : '<div class="w-12 h-12 rounded-lg bg-[#0a0a0a] flex items-center justify-center flex-shrink-0"><svg class="w-6 h-6 text-[#3E3E3A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>'}
                         <div class="flex-1 min-w-0">
                             <h4 class="text-sm font-semibold text-[#EDEDEC] mb-1 truncate">${item.menuName}</h4>
-                            <p class="text-xs text-[#A1A09A]">Rp ${item.price.toLocaleString('id-ID')}</p>
+                            <p class="text-xs text-[#EDEDEC]">Rp ${item.price.toLocaleString('id-ID')}</p>
                         </div>
                     </div>
                     <div class="flex items-center justify-between">
