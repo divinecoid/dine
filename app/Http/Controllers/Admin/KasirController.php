@@ -120,10 +120,16 @@ class KasirController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Get unpaid orders (completed but not paid)
+            // Get unpaid orders (pending or completed but not paid)
             $unpaidOrders = Order::where('mdx_store_id', $selectedStore->id)
-                ->where('status', 'completed')
-                ->where('payment_status', '!=', 'paid')
+                ->where(function($query) {
+                    $query->where('status', 'pending')
+                        ->orWhere(function($q) {
+                            $q->where('status', 'completed')
+                              ->where('payment_status', '!=', 'paid')
+                              ->where('payment_status', '!=', 'cancelled');
+                        });
+                })
                 ->whereNull('closed_at')
                 ->with(['orderDetails.menu', 'table', 'payments'])
                 ->orderBy('created_at', 'desc')
@@ -305,9 +311,10 @@ class KasirController extends Controller
 
         $remainingAmount = $order->total_amount - $totalPaid;
         $paymentAmount = $request->input('amount');
+        $paymentMethod = $request->input('payment_method');
 
-        // Validate payment amount
-        if ($paymentAmount > $remainingAmount) {
+        // Validate payment amount - allow overpayment for cash
+        if ($paymentMethod !== 'cash' && $paymentAmount > $remainingAmount) {
             return back()->withErrors(['error' => 'Jumlah pembayaran melebihi sisa tagihan.']);
         }
 

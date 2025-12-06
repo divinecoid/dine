@@ -258,13 +258,41 @@
                 @if($unpaidOrders->isEmpty())
                     <p class="text-center text-[#A1A09A] py-8">Tidak ada order yang belum dibayar</p>
                 @else
-                    <div class="space-y-4">
+                    <!-- Filters -->
+                    <div class="bg-[#0a0a0a] border border-[#3E3E3A] rounded-lg p-4 mb-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-[#EDEDEC] mb-2">Filter Meja</label>
+                                <select id="filter-table" onchange="filterUnpaidOrders()" class="w-full px-4 py-2 bg-[#161615] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F53003]/50">
+                                    <option value="">Semua Meja</option>
+                                    <option value="no-table">Tanpa Meja (Takeaway/Delivery)</option>
+                                    @foreach($tables as $table)
+                                        <option value="{{ $table->id }}">{{ $table->name ?? "Meja {$table->table_number}" }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#EDEDEC] mb-2">Filter Status</label>
+                                <select id="filter-status" onchange="filterUnpaidOrders()" class="w-full px-4 py-2 bg-[#161615] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F53003]/50">
+                                    <option value="">Semua Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="processing">Processing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="unpaid-orders-list" class="space-y-4">
                         @foreach($unpaidOrders as $order)
                             @php
                                 $totalPaid = $order->payments()->where('status', 'completed')->sum('amount');
                                 $remainingAmount = $order->total_amount - $totalPaid;
                             @endphp
-                            <div class="bg-[#0a0a0a] border border-[#3E3E3A] rounded-lg p-4">
+                            <div class="unpaid-order-item bg-[#0a0a0a] border border-[#3E3E3A] rounded-lg p-4" 
+                                 data-table-id="{{ $order->mdx_table_id ?? 'no-table' }}" 
+                                 data-status="{{ strtolower($order->status) }}">
                                 <div class="flex items-start justify-between mb-3">
                                     <div>
                                         <h3 class="text-lg font-semibold text-[#EDEDEC]">{{ $order->order_number }}</h3>
@@ -276,6 +304,9 @@
                                     <div class="text-right">
                                         <p class="text-lg font-bold text-[#EDEDEC]">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
                                         <p class="text-sm text-[#A1A09A]">Sisa: Rp {{ number_format($remainingAmount, 0, ',', '.') }}</p>
+                                        <span class="inline-block mt-1 px-2 py-1 text-xs font-semibold rounded {{ $order->status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-blue-500/20 text-blue-400' }}">
+                                            {{ strtoupper($order->status) }}
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -292,12 +323,15 @@
                             </div>
                         @endforeach
                     </div>
+                    <div id="no-unpaid-orders-filtered" class="hidden text-center text-[#A1A09A] py-8">
+                        Tidak ada order yang sesuai dengan filter
+                    </div>
                 @endif
             </div>
         </div>
 
         <!-- Payment Modal -->
-        <div id="payment-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center" style="display: none;" onclick="closePaymentModal(event)">
+        <div id="payment-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center" style="display: none;" onclick="if(event.target === this) closePaymentModal(event)">
             <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg p-6 max-w-md w-full mx-4 relative z-10" onclick="event.stopPropagation()">
                 <h3 class="text-xl font-semibold text-[#EDEDEC] mb-4">Proses Pembayaran</h3>
                 <form action="#" method="POST" id="payment-form">
@@ -306,7 +340,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-[#EDEDEC] mb-2">Metode Pembayaran *</label>
-                            <select name="payment_method" required class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F53003]/50">
+                            <select name="payment_method" id="payment-method" required class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F53003]/50">
                                 <option value="cash">Cash</option>
                                 <option value="card">Card</option>
                                 <option value="transfer">Transfer</option>
@@ -318,6 +352,9 @@
                             <label class="block text-sm font-medium text-[#EDEDEC] mb-2">Jumlah Pembayaran *</label>
                             <input type="number" name="amount" id="payment-amount" required step="0.01" min="0" class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F53003]/50">
                             <p class="text-xs text-[#A1A09A] mt-1">Sisa tagihan: <span id="remaining-amount">Rp 0</span></p>
+                            <div id="change-amount-container" class="hidden mt-2">
+                                <p class="text-sm font-semibold text-green-400">Kembalian: <span id="change-amount">Rp 0</span></p>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#EDEDEC] mb-2">Nomor Referensi (opsional)</label>
@@ -332,7 +369,7 @@
                         <button type="button" onclick="closePaymentModal()" class="flex-1 px-4 py-2 border border-[#3E3E3A] text-[#EDEDEC] rounded-lg hover:bg-[#0a0a0a] transition-colors">
                             Batal
                         </button>
-                        <button type="submit" class="flex-1 px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
+                        <button type="submit" id="submit-payment-btn" class="flex-1 px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
                             Proses Pembayaran
                         </button>
                     </div>
@@ -693,6 +730,9 @@
         // This is just for display, actual calculation is done on server
     }
 
+    // Store remaining amount globally for change calculation
+    let currentRemainingAmount = 0;
+
     // Payment modal
     function showPaymentModal(orderId, remainingAmount) {
         if (!orderId || orderId <= 0) {
@@ -705,15 +745,41 @@
         const amountInput = document.getElementById('payment-amount');
         const remainingSpan = document.getElementById('remaining-amount');
         const orderIdInput = document.getElementById('payment-order-id');
+        const changeContainer = document.getElementById('change-amount-container');
 
         if (!modal || !form) {
             console.error('Modal or form not found');
             return;
         }
 
+        // Store remaining amount globally
+        currentRemainingAmount = remainingAmount;
+
         // Set form action with full URL
         const paymentUrl = `{{ url('/admin/kasir/order') }}/${orderId}/payment`;
-        form.action = paymentUrl;
+        form.setAttribute('action', paymentUrl);
+        form.setAttribute('method', 'POST');
+        
+        // Ensure CSRF token exists
+        let csrfToken = form.querySelector('input[name="_token"]');
+        if (!csrfToken) {
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = '_token';
+            tokenInput.value = '{{ csrf_token() }}';
+            form.insertBefore(tokenInput, form.firstChild);
+        }
+        
+        // Debug: log the action to console
+        console.log('Payment form action set to:', paymentUrl);
+        console.log('Payment form method:', form.getAttribute('method'));
+        console.log('Payment form action attribute:', form.getAttribute('action'));
+        
+        // Verify form action is set correctly
+        setTimeout(() => {
+            console.log('Payment form action after timeout:', form.action);
+            console.log('Payment form action attribute after timeout:', form.getAttribute('action'));
+        }, 100);
         
         if (orderIdInput) {
             orderIdInput.value = orderId;
@@ -721,16 +787,33 @@
         
         if (amountInput) {
             amountInput.value = remainingAmount;
-            amountInput.max = remainingAmount;
+            // Remove max limit to allow overpayment for cash
+            amountInput.removeAttribute('max');
+            amountInput.removeAttribute('readonly');
+            amountInput.removeAttribute('disabled');
         }
         
         if (remainingSpan) {
             remainingSpan.textContent = 'Rp ' + Math.round(remainingAmount).toLocaleString('id-ID');
         }
 
+        // Hide change container initially
+        if (changeContainer) {
+            changeContainer.classList.add('hidden');
+        }
+
         // Show modal
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
+        
+        // Focus on amount input after modal is shown
+        setTimeout(() => {
+            if (amountInput) {
+                amountInput.focus();
+                amountInput.select();
+            }
+            calculateChange();
+        }, 200);
     }
 
     function closePaymentModal(event) {
@@ -741,6 +824,7 @@
         
         const modal = document.getElementById('payment-modal');
         const form = document.getElementById('payment-form');
+        const changeContainer = document.getElementById('change-amount-container');
         
         if (modal) {
             modal.classList.add('hidden');
@@ -755,6 +839,12 @@
             if (orderIdInput) {
                 orderIdInput.value = '';
             }
+        }
+        
+        // Reset and hide change container
+        currentRemainingAmount = 0;
+        if (changeContainer) {
+            changeContainer.classList.add('hidden');
         }
     }
 
@@ -795,22 +885,149 @@
         const paymentForm = document.getElementById('payment-form');
         if (paymentForm) {
             paymentForm.addEventListener('submit', function(e) {
-                if (!this.action || this.action === '#' || this.action === '') {
+                console.log('Payment form submit triggered');
+                const formAction = this.action || this.getAttribute('action') || '';
+                console.log('Form action:', formAction);
+                console.log('Form action attribute:', this.getAttribute('action'));
+                
+                // Check if form action is valid
+                if (!formAction || formAction === '#' || formAction === '') {
                     e.preventDefault();
-                    console.error('Payment form action is not set');
-                    alert('Terjadi kesalahan. Silakan tutup modal dan coba lagi.');
+                    console.error('Payment form action is not set:', formAction);
+                    alert('Terjadi kesalahan. Silakan tutup modal dan buka lagi.');
                     return false;
                 }
                 
-                if (!this.action.includes('/admin/kasir/order/') || !this.action.includes('/payment')) {
+                // Validate action URL format
+                if (!formAction.includes('/admin/kasir/order/') || !formAction.includes('/payment')) {
                     e.preventDefault();
-                    console.error('Payment form action is incorrect:', this.action);
-                    alert('Terjadi kesalahan. Silakan tutup modal dan coba lagi.');
+                    console.error('Payment form action is incorrect:', formAction);
+                    alert('Terjadi kesalahan. Silakan tutup modal dan buka lagi.');
                     return false;
                 }
+                
+                // Validate required fields
+                const amountInput = document.getElementById('payment-amount');
+                const paymentMethod = document.getElementById('payment-method');
+                
+                console.log('Amount input value:', amountInput?.value);
+                console.log('Payment method value:', paymentMethod?.value);
+                
+                if (!amountInput || !amountInput.value || parseFloat(amountInput.value) <= 0) {
+                    e.preventDefault();
+                    alert('Jumlah pembayaran harus diisi dan lebih dari 0.');
+                    return false;
+                }
+                
+                if (!paymentMethod || !paymentMethod.value) {
+                    e.preventDefault();
+                    alert('Metode pembayaran harus dipilih.');
+                    return false;
+                }
+                
+                console.log('Form validation passed, submitting to:', formAction);
+                // Ensure form action is set before submit
+                if (this.action !== formAction) {
+                    this.action = formAction;
+                }
+                // Allow form to submit normally
+                return true;
             });
         }
+
+        // Setup change calculation for payment modal using event delegation
+        // This ensures it works even when modal is dynamically shown
+        // Use a flag to ensure listeners are only added once
+        if (!window.paymentModalListenersAdded) {
+            document.body.addEventListener('change', function(e) {
+                if (e.target && e.target.id === 'payment-method') {
+                    calculateChange();
+                }
+            });
+            
+            document.body.addEventListener('input', function(e) {
+                if (e.target && e.target.id === 'payment-amount') {
+                    calculateChange();
+                }
+            });
+            
+            document.body.addEventListener('blur', function(e) {
+                if (e.target && e.target.id === 'payment-amount') {
+                    calculateChange();
+                }
+            }, true);
+            
+            window.paymentModalListenersAdded = true;
+        }
     });
+
+    // Calculate change and show popup
+    function calculateChange() {
+        const paymentMethod = document.getElementById('payment-method')?.value;
+        const amountInput = document.getElementById('payment-amount');
+        const changeContainer = document.getElementById('change-amount-container');
+        const changeAmountSpan = document.getElementById('change-amount');
+        
+        if (!amountInput) return;
+        
+        const paymentAmount = parseFloat(amountInput.value) || 0;
+        const remainingAmount = currentRemainingAmount || 0;
+        
+        if (paymentMethod === 'cash' && paymentAmount > remainingAmount && paymentAmount > 0) {
+            const change = paymentAmount - remainingAmount;
+            if (changeContainer) {
+                changeContainer.classList.remove('hidden');
+            }
+            if (changeAmountSpan) {
+                changeAmountSpan.textContent = 'Rp ' + Math.round(change).toLocaleString('id-ID');
+            }
+        } else {
+            if (changeContainer) {
+                changeContainer.classList.add('hidden');
+            }
+        }
+    }
+
+    // Filter unpaid orders
+    function filterUnpaidOrders() {
+        const tableFilter = document.getElementById('filter-table')?.value || '';
+        const statusFilter = document.getElementById('filter-status')?.value || '';
+        const orderItems = document.querySelectorAll('.unpaid-order-item');
+        const noResultsMessage = document.getElementById('no-unpaid-orders-filtered');
+        let visibleCount = 0;
+
+        orderItems.forEach(item => {
+            const tableId = item.getAttribute('data-table-id') || '';
+            const status = item.getAttribute('data-status') || '';
+            
+            let matchesTable = true;
+            if (tableFilter) {
+                if (tableFilter === 'no-table') {
+                    matchesTable = !tableId || tableId === 'no-table' || tableId === '';
+                } else {
+                    matchesTable = tableId === tableFilter;
+                }
+            }
+            
+            const matchesStatus = !statusFilter || status === statusFilter.toLowerCase();
+            
+            if (matchesTable && matchesStatus) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show/hide no results message
+        if (noResultsMessage) {
+            if (visibleCount === 0 && orderItems.length > 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        }
+    }
 </script>
 @endpush
 @endsection
