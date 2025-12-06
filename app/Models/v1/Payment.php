@@ -34,6 +34,8 @@ class Payment extends Model
         'customer_phone',
         'notes',
         'reference_number',
+        'xendit_payment_id',
+        'xendit_qr_code',
         'status',
         'paid_at',
     ];

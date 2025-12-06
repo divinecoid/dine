@@ -36,7 +36,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.role'])->grou
     Route::get('/kasir', [\App\Http\Controllers\Admin\KasirController::class, 'index'])->name('kasir.index');
     Route::post('/kasir/order', [\App\Http\Controllers\Admin\KasirController::class, 'store'])->name('kasir.order.store');
     Route::post('/kasir/order/{order}/payment', [\App\Http\Controllers\Admin\KasirController::class, 'processPayment'])->name('kasir.order.payment');
+    Route::post('/kasir/order/{order}/generate-qris', [\App\Http\Controllers\Admin\KasirController::class, 'generateQRIS'])->name('kasir.order.generate-qris');
     Route::post('/kasir/order/{order}/complete', [\App\Http\Controllers\Admin\KasirController::class, 'completeOrder'])->name('kasir.order.complete');
+    Route::get('/kasir/payment/{payment}/status', [\App\Http\Controllers\Admin\KasirController::class, 'checkPaymentStatus'])->name('kasir.payment.status');
     
     // CRUD Routes
     Route::resource('brands', \App\Http\Controllers\Admin\BrandController::class);
@@ -88,6 +90,10 @@ Route::prefix('orders')->name('public.orders.')->group(function () {
 Route::get('/order/{orderNumber}', [PublicOrderController::class, 'show'])
     ->where('orderNumber', '[A-Z0-9-]+')
     ->name('public.order');
+
+// Xendit Webhook (no CSRF protection needed)
+Route::post('/webhooks/xendit', [\App\Http\Controllers\XenditWebhookController::class, 'handleWebhook'])
+    ->name('webhooks.xendit');
 
 // Public menu view for QR code access
 // URL pattern: /{brand-slug}?table_id={unique_identifier}

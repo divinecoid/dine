@@ -71,6 +71,8 @@
         }
     </style>
     @stack('styles')
+    <!-- QR Code Generator Library for QRIS -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-[#0a0a0a] text-[#EDEDEC]">
     <div class="flex h-screen overflow-hidden">

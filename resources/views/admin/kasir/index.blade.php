@@ -62,6 +62,55 @@
                 {{ session('success') }}
             </div>
         @endif
+        
+        @if(session('qris_payment_id'))
+            @php
+                $qrisPayment = \App\Models\v1\Payment::find(session('qris_payment_id'));
+            @endphp
+            @if($qrisPayment && $qrisPayment->xendit_qr_code)
+                <div class="bg-blue-900/30 border border-blue-500/30 text-blue-400 px-4 py-3 rounded-lg mb-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-semibold">QRIS Payment Created</p>
+                            <p class="text-sm">Silakan scan QR code di bawah untuk menyelesaikan pembayaran</p>
+                        </div>
+                        <button onclick="document.getElementById('qris-modal').classList.remove('hidden')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Lihat QR Code
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- QRIS Modal -->
+                <div id="qris-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center" onclick="if(event.target === this) this.classList.add('hidden')">
+                    <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg p-6 max-w-md w-full mx-4 relative z-10" onclick="event.stopPropagation()">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold text-[#EDEDEC]">QRIS Payment</h3>
+                            <button onclick="document.getElementById('qris-modal').classList.add('hidden')" class="text-[#A1A09A] hover:text-[#EDEDEC]">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg flex items-center justify-center mb-4">
+                            @if(str_starts_with($qrisPayment->xendit_qr_code, 'data:image'))
+                                <img src="{{ $qrisPayment->xendit_qr_code }}" alt="QRIS QR Code" class="w-64 h-64">
+                            @elseif(str_starts_with($qrisPayment->xendit_qr_code, 'http'))
+                                <img src="{{ $qrisPayment->xendit_qr_code }}" alt="QRIS QR Code" class="w-64 h-64">
+                            @else
+                                <img src="data:image/png;base64,{{ $qrisPayment->xendit_qr_code }}" alt="QRIS QR Code" class="w-64 h-64">
+                            @endif
+                        </div>
+                        <p class="text-sm text-[#A1A09A] text-center mb-4">Scan QR code dengan aplikasi e-wallet atau mobile banking Anda</p>
+                        <p class="text-lg font-semibold text-[#EDEDEC] text-center mb-4">Rp {{ number_format($qrisPayment->amount, 0, ',', '.') }}</p>
+                        <div class="mt-4">
+                            <button onclick="checkQRISPaymentStatus({{ $qrisPayment->id }})" class="w-full px-4 py-2 bg-[#F53003] text-white font-semibold rounded-lg hover:bg-[#d42800] transition-colors">
+                                Cek Status Pembayaran
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endif
 
         <!-- Tabs -->
         <div class="bg-[#161615] border border-[#3E3E3A] rounded-lg">
@@ -342,6 +391,7 @@
                             <label class="block text-sm font-medium text-[#EDEDEC] mb-2">Metode Pembayaran *</label>
                             <select name="payment_method" id="payment-method" required class="w-full px-4 py-2 bg-[#0a0a0a] border border-[#3E3E3A] text-[#EDEDEC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F53003]/50">
                                 <option value="cash">Cash</option>
+                                <option value="qris">QRIS</option>
                                 <option value="card">Card</option>
                                 <option value="transfer">Transfer</option>
                                 <option value="e_wallet">E-Wallet</option>
@@ -355,6 +405,28 @@
                             <div id="change-amount-container" class="hidden mt-2">
                                 <p class="text-sm font-semibold text-green-400">Kembalian: <span id="change-amount">Rp 0</span></p>
                             </div>
+                            <div id="qris-info" class="hidden mt-2 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                                <p class="text-sm text-blue-400">Untuk QRIS, jumlah pembayaran akan otomatis sesuai dengan sisa tagihan.</p>
+                            </div>
+                        </div>
+                        <div id="qris-generate-container" class="hidden">
+                            <button type="button" onclick="generateQRIS()" id="generate-qris-btn" class="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                                Generate QRIS
+                            </button>
+                        </div>
+                        <div id="qris-qr-container" class="hidden">
+                            <label class="block text-sm font-medium text-[#EDEDEC] mb-2">QR Code</label>
+                            <div class="bg-white p-4 rounded-lg flex items-center justify-center">
+                                <div id="qris-qr-code" class="w-64 h-64 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F53003] mx-auto mb-2"></div>
+                                        <p class="text-[#A1A09A] text-sm">Memuat QR Code...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-[#A1A09A] mt-2 text-center">Scan QR code dengan aplikasi e-wallet atau mobile banking Anda</p>
+                            <input type="hidden" name="xendit_payment_id" id="xendit-payment-id" value="">
+                            <input type="hidden" name="xendit_qr_code" id="xendit-qr-code" value="">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#EDEDEC] mb-2">Nomor Referensi (opsional)</label>
@@ -731,7 +803,8 @@
     }
 
     // Store remaining amount globally for change calculation
-    let currentRemainingAmount = 0;
+    window.currentRemainingAmount = 0;
+    let currentRemainingAmount = 0; // Keep for backward compatibility
 
     // Payment modal
     function showPaymentModal(orderId, remainingAmount) {
@@ -754,6 +827,7 @@
 
         // Store remaining amount globally
         currentRemainingAmount = remainingAmount;
+        window.currentRemainingAmount = remainingAmount;
 
         // Set form action with full URL
         const paymentUrl = `{{ url('/admin/kasir/order') }}/${orderId}/payment`;
@@ -848,6 +922,172 @@
         }
     }
 
+    // Handle payment method change (global scope)
+    function handlePaymentMethodChange(method) {
+        const qrisInfo = document.getElementById('qris-info');
+        const qrisGenerateContainer = document.getElementById('qris-generate-container');
+        const qrisQrContainer = document.getElementById('qris-qr-container');
+        const amountInput = document.getElementById('payment-amount');
+        const remainingAmount = window.currentRemainingAmount || 0;
+        
+        if (method === 'qris') {
+            if (qrisInfo) qrisInfo.classList.remove('hidden');
+            if (qrisGenerateContainer) qrisGenerateContainer.classList.remove('hidden');
+            if (qrisQrContainer) qrisQrContainer.classList.add('hidden');
+            // Set amount to remaining amount for QRIS
+            if (amountInput && remainingAmount > 0) {
+                amountInput.value = remainingAmount;
+                amountInput.readOnly = true;
+            }
+            // Reset QR code data
+            const xenditPaymentIdInput = document.getElementById('xendit-payment-id');
+            const xenditQrCodeInput = document.getElementById('xendit-qr-code');
+            if (xenditPaymentIdInput) xenditPaymentIdInput.value = '';
+            if (xenditQrCodeInput) xenditQrCodeInput.value = '';
+        } else {
+            if (qrisInfo) qrisInfo.classList.add('hidden');
+            if (qrisGenerateContainer) qrisGenerateContainer.classList.add('hidden');
+            if (qrisQrContainer) qrisQrContainer.classList.add('hidden');
+            if (amountInput) amountInput.readOnly = false;
+        }
+    }
+    
+    // Generate QRIS (global scope)
+    function generateQRIS() {
+        const orderIdInput = document.getElementById('payment-order-id');
+        const amountInput = document.getElementById('payment-amount');
+        const generateBtn = document.getElementById('generate-qris-btn');
+        const qrisQrContainer = document.getElementById('qris-qr-container');
+        const qrisQrCode = document.getElementById('qris-qr-code');
+        const qrisGenerateContainer = document.getElementById('qris-generate-container');
+        
+        if (!orderIdInput || !amountInput) {
+            alert('Terjadi kesalahan. Silakan tutup modal dan buka lagi.');
+            return;
+        }
+        
+        const orderId = orderIdInput.value;
+        const amount = parseFloat(amountInput.value) || 0;
+        
+        if (!orderId || amount <= 0) {
+            alert('Jumlah pembayaran harus lebih dari 0.');
+            return;
+        }
+        
+        // Check if QRCode library is loaded
+        if (typeof QRCode === 'undefined') {
+            alert('Library QR Code belum ter-load. Silakan refresh halaman dan coba lagi.');
+            console.error('QRCode library not available');
+            return;
+        }
+        
+        // Disable button and show loading
+        if (generateBtn) {
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+        }
+        
+        // Show QR container with loading
+        if (qrisQrContainer) qrisQrContainer.classList.remove('hidden');
+        if (qrisQrCode) {
+            qrisQrCode.innerHTML = `
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F53003] mx-auto mb-2"></div>
+                    <p class="text-[#A1A09A] text-sm">Memuat QR Code...</p>
+                </div>
+            `;
+        }
+        
+        // Make AJAX request
+        fetch(`/admin/kasir/order/${orderId}/generate-qris`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                amount: amount
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.qr_code) {
+                console.log('QR code data received:', data.qr_code);
+                console.log('QRCode library available:', typeof QRCode !== 'undefined');
+                
+                // Generate QR code image from QR string using qrcodejs library
+                if (typeof QRCode !== 'undefined') {
+                    console.log('Generating QR code from string...');
+                    
+                    // Clear previous content
+                    if (qrisQrCode) {
+                        qrisQrCode.innerHTML = '';
+                    }
+                    
+                    // qrcodejs library uses different API - create QRCode instance with element
+                    const qr = new QRCode(qrisQrCode, {
+                        text: data.qr_code,
+                        width: 256,
+                        height: 256,
+                        colorDark: '#000000',
+                        colorLight: '#FFFFFF',
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                    
+                    console.log('QR code generated using qrcodejs');
+                    
+                } else {
+                    console.error('QRCode library not loaded. Please check if CDN is accessible.');
+                    // Fallback if QRCode library not loaded
+                    const qrImage = data.qr_code.startsWith('data:image') 
+                        ? data.qr_code 
+                        : (data.qr_code.startsWith('http') 
+                            ? data.qr_code 
+                            : null);
+                    
+                    if (qrImage && qrisQrCode) {
+                        qrisQrCode.innerHTML = `<img src="${qrImage}" alt="QRIS QR Code" class="w-64 h-64">`;
+                    } else {
+                        // Show QR string as text
+                        if (qrisQrCode) {
+                            qrisQrCode.innerHTML = `<div class="text-center p-4"><p class="text-[#A1A09A] text-xs mb-2">QR Code String:</p><p class="text-[#EDEDEC] text-xs break-all">${data.qr_code}</p></div>`;
+                        }
+                    }
+                }
+                
+                // Store Xendit payment ID and QR code
+                const xenditPaymentIdInput = document.getElementById('xendit-payment-id');
+                const xenditQrCodeInput = document.getElementById('xendit-qr-code');
+                if (xenditPaymentIdInput) xenditPaymentIdInput.value = data.payment_id || '';
+                if (xenditQrCodeInput) xenditQrCodeInput.value = data.qr_code || '';
+                
+                // Hide generate button
+                if (qrisGenerateContainer) qrisGenerateContainer.classList.add('hidden');
+            } else {
+                alert(data.message || 'Gagal generate QRIS. Silakan coba lagi.');
+                if (qrisQrContainer) qrisQrContainer.classList.add('hidden');
+                if (qrisQrCode) {
+                    qrisQrCode.innerHTML = '<p class="text-red-400 text-sm">Gagal memuat QR Code</p>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error generating QRIS:', error);
+            alert('Terjadi kesalahan saat generate QRIS. Silakan coba lagi.');
+            if (qrisQrContainer) qrisQrContainer.classList.add('hidden');
+            if (qrisQrCode) {
+                qrisQrCode.innerHTML = '<p class="text-red-400 text-sm">Error</p>';
+            }
+        })
+        .finally(() => {
+            if (generateBtn) {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate QRIS';
+            }
+        });
+    }
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         // Ensure payment modal is hidden on page load
@@ -909,6 +1149,8 @@
                 // Validate required fields
                 const amountInput = document.getElementById('payment-amount');
                 const paymentMethod = document.getElementById('payment-method');
+                const xenditPaymentId = document.getElementById('xendit-payment-id');
+                const xenditQrCode = document.getElementById('xendit-qr-code');
                 
                 console.log('Amount input value:', amountInput?.value);
                 console.log('Payment method value:', paymentMethod?.value);
@@ -923,6 +1165,15 @@
                     e.preventDefault();
                     alert('Metode pembayaran harus dipilih.');
                     return false;
+                }
+                
+                // For QRIS, validate that QR code has been generated
+                if (paymentMethod.value === 'qris') {
+                    if (!xenditPaymentId || !xenditPaymentId.value || !xenditQrCode || !xenditQrCode.value) {
+                        e.preventDefault();
+                        alert('Silakan generate QRIS terlebih dahulu dengan klik tombol Generate QRIS.');
+                        return false;
+                    }
                 }
                 
                 console.log('Form validation passed, submitting to:', formAction);
@@ -941,6 +1192,7 @@
         if (!window.paymentModalListenersAdded) {
             document.body.addEventListener('change', function(e) {
                 if (e.target && e.target.id === 'payment-method') {
+                    handlePaymentMethodChange(e.target.value);
                     calculateChange();
                 }
             });
@@ -958,6 +1210,32 @@
             }, true);
             
             window.paymentModalListenersAdded = true;
+        }
+        
+        // Check QRIS payment status
+        function checkQRISPaymentStatus(paymentId) {
+            fetch(`/admin/kasir/payment/${paymentId}/status`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'completed') {
+                    alert('Pembayaran berhasil!');
+                    window.location.reload();
+                } else if (data.status === 'pending') {
+                    alert('Pembayaran masih menunggu. Silakan scan QR code dan selesaikan pembayaran.');
+                } else {
+                    alert('Status pembayaran: ' + (data.status || 'Unknown'));
+                }
+            })
+            .catch(error => {
+                console.error('Error checking payment status:', error);
+                alert('Gagal mengecek status pembayaran. Silakan refresh halaman.');
+            });
         }
     });
 

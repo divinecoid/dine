@@ -10,9 +10,11 @@ use App\Models\v1\Payment;
 use App\Models\v1\Menu;
 use App\Models\v1\Table;
 use App\Models\v1\Category;
+use App\Services\XenditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class KasirController extends Controller
 {
@@ -270,6 +272,128 @@ class KasirController extends Controller
     }
 
     /**
+     * Generate QRIS for an order (AJAX).
+     */
+    public function generateQRIS(Request $request, $orderId)
+    {
+        $user = Auth::user();
+        $order = Order::with(['store', 'payments'])->findOrFail($orderId);
+
+        // Verify store access
+        if ($user->isKasir() && $order->mdx_store_id !== $user->mdx_store_id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access'], 403);
+        }
+        if ($user->isStoreManager() && $order->mdx_store_id !== $user->store?->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access'], 403);
+        }
+        if ($user->isBrandOwner() && !in_array($order->mdx_brand_id, $user->getAccessibleBrandIds())) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access'], 403);
+        }
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+        ]);
+
+        // Calculate total paid amount
+        $totalPaid = $order->payments()
+            ->where('status', 'completed')
+            ->sum('amount');
+
+        $remainingAmount = $order->total_amount - $totalPaid;
+        $paymentAmount = $request->input('amount');
+
+        // Validate payment amount
+        if ($paymentAmount > $remainingAmount) {
+            return response()->json(['success' => false, 'message' => 'Jumlah pembayaran melebihi sisa tagihan.'], 400);
+        }
+
+        try {
+            // Check if Xendit API key is configured
+            $apiKey = config('services.xendit.api_key');
+            if (!$apiKey) {
+                Log::error('Xendit API key not configured');
+                return response()->json(['success' => false, 'message' => 'Xendit API key belum dikonfigurasi. Silakan hubungi administrator.'], 500);
+            }
+
+            $xenditService = new XenditService();
+            
+            $xenditData = [
+                'reference_id' => $order->order_number . '-' . time(),
+                'amount' => (int) round($paymentAmount),
+                'customer_name' => $order->customer_name,
+                'customer_email' => $order->customer_phone ?? null,
+                'description' => "Payment for Order #{$order->order_number}",
+                'metadata' => [
+                    'order_id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'store_id' => $order->mdx_store_id,
+                ],
+            ];
+
+            $xenditResponse = $xenditService->createQRISPayment($xenditData);
+
+            if (!$xenditResponse) {
+                Log::error('Xendit QRIS generation failed', [
+                    'order_id' => $orderId,
+                    'xendit_data' => $xenditData,
+                ]);
+                return response()->json(['success' => false, 'message' => 'Gagal membuat payment request ke Xendit. Silakan coba lagi atau periksa log untuk detail error.'], 500);
+            }
+
+            // Xendit returns payment_request_id, not id
+            $xenditPaymentId = $xenditResponse['payment_request_id'] ?? $xenditResponse['id'] ?? null;
+            
+            // Get QR code from actions array
+            // Xendit returns actions as array: [{"type":"PRESENT_TO_CUSTOMER","descriptor":"QR_STRING","value":"..."}]
+            $xenditQrCode = null;
+            if (isset($xenditResponse['actions']) && is_array($xenditResponse['actions'])) {
+                foreach ($xenditResponse['actions'] as $action) {
+                    if (isset($action['descriptor']) && $action['descriptor'] === 'QR_STRING' && isset($action['value'])) {
+                        $xenditQrCode = $action['value'];
+                        break;
+                    }
+                    // Fallback: if there's a value field, use it
+                    if (isset($action['value']) && !$xenditQrCode) {
+                        $xenditQrCode = $action['value'];
+                    }
+                }
+            }
+            
+            // Legacy support: check if actions is an object (old format)
+            if (!$xenditQrCode && isset($xenditResponse['actions']) && is_array($xenditResponse['actions'])) {
+                $xenditQrCode = $xenditResponse['actions']['qr_string'] ?? 
+                               $xenditResponse['actions']['qr_code'] ?? 
+                               null;
+            }
+
+            if (!$xenditQrCode) {
+                Log::error('QR code not found in Xendit response', [
+                    'order_id' => $orderId,
+                    'xendit_response' => $xenditResponse,
+                    'response_structure' => json_encode($xenditResponse, JSON_PRETTY_PRINT),
+                ]);
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'QR code tidak ditemukan dalam response Xendit. Silakan cek log untuk detail.',
+                ], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'payment_id' => $xenditPaymentId,
+                'qr_code' => $xenditQrCode,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error generating QRIS', [
+                'order_id' => $orderId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['success' => false, 'message' => 'Gagal generate QRIS: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Process payment for an order.
      */
     public function processPayment(Request $request, $orderId)
@@ -289,7 +413,7 @@ class KasirController extends Controller
         }
 
         $request->validate([
-            'payment_method' => 'required|in:cash,card,transfer,e_wallet,other',
+            'payment_method' => 'required|in:cash,card,transfer,e_wallet,qris,other',
             'amount' => 'required|numeric|min:0',
             'reference_number' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:1000',
@@ -320,6 +444,19 @@ class KasirController extends Controller
 
         DB::beginTransaction();
         try {
+            $xenditPaymentId = $request->input('xendit_payment_id');
+            $xenditQrCode = $request->input('xendit_qr_code');
+            $paymentStatus = 'completed';
+
+            // If payment method is QRIS, use the generated QRIS data
+            if ($paymentMethod === 'qris') {
+                if (!$xenditPaymentId || !$xenditQrCode) {
+                    DB::rollBack();
+                    return back()->withErrors(['error' => 'QRIS belum di-generate. Silakan klik tombol Generate QRIS terlebih dahulu.']);
+                }
+                $paymentStatus = 'pending'; // QRIS payment is pending until confirmed
+            }
+
             // Create payment record
             $payment = Payment::create([
                 'mdx_store_id' => $order->mdx_store_id,
@@ -327,16 +464,18 @@ class KasirController extends Controller
                 'trx_order_id' => $order->id,
                 'payment_number' => Payment::generatePaymentNumber(),
                 'amount' => $paymentAmount,
-                'payment_method' => $request->input('payment_method'),
+                'payment_method' => $paymentMethod,
                 'customer_name' => $order->customer_name,
                 'customer_phone' => $order->customer_phone,
                 'notes' => $request->input('notes'),
                 'reference_number' => $request->input('reference_number'),
-                'status' => 'completed',
-                'paid_at' => now(),
+                'xendit_payment_id' => $xenditPaymentId,
+                'xendit_qr_code' => $xenditQrCode,
+                'status' => $paymentStatus,
+                'paid_at' => $paymentStatus === 'completed' ? now() : null,
             ]);
 
-            // Calculate new total paid amount
+            // Calculate new total paid amount (only completed payments)
             $newTotalPaid = $order->payments()
                 ->where('status', 'completed')
                 ->sum('amount');
@@ -346,6 +485,8 @@ class KasirController extends Controller
                 $order->payment_status = 'paid';
             } elseif ($newTotalPaid > 0) {
                 $order->payment_status = 'partial';
+            } elseif ($paymentMethod === 'qris' && $paymentStatus === 'pending') {
+                // For QRIS pending payments, keep payment_status as is
             }
 
             // Update order payment method if not set
@@ -357,12 +498,81 @@ class KasirController extends Controller
 
             DB::commit();
 
+            if ($paymentMethod === 'qris' && $paymentStatus === 'pending') {
+                return redirect()->route('admin.kasir.index', ['store_id' => $order->mdx_store_id])
+                    ->with('success', 'QRIS payment request berhasil dibuat. Silakan scan QR code untuk menyelesaikan pembayaran.')
+                    ->with('qris_payment_id', $payment->id);
+            }
+
             return redirect()->route('admin.kasir.index', ['store_id' => $order->mdx_store_id])
                 ->with('success', 'Pembayaran berhasil diproses. Sisa tagihan: Rp ' . number_format($order->total_amount - $newTotalPaid, 0, ',', '.'));
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Gagal memproses pembayaran: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Check payment status (for QRIS).
+     */
+    public function checkPaymentStatus($paymentId)
+    {
+        $payment = Payment::findOrFail($paymentId);
+        
+        // If payment has Xendit payment ID, check status from Xendit
+        if ($payment->xendit_payment_id) {
+            $xenditService = new XenditService();
+            $xenditResponse = $xenditService->getPaymentRequest($payment->xendit_payment_id);
+            
+            if ($xenditResponse) {
+                $xenditStatus = $xenditResponse['status'] ?? null;
+                
+                // Update payment status based on Xendit status
+                if ($xenditStatus === 'SUCCEEDED' && $payment->status !== 'completed') {
+                    DB::beginTransaction();
+                    try {
+                        $payment->status = 'completed';
+                        $payment->paid_at = now();
+                        $payment->save();
+                        
+                        // Update order payment status
+                        $order = $payment->order;
+                        $totalPaid = $order->payments()
+                            ->where('status', 'completed')
+                            ->sum('amount');
+                        
+                        if ($totalPaid >= $order->total_amount) {
+                            $order->payment_status = 'paid';
+                        } elseif ($totalPaid > 0) {
+                            $order->payment_status = 'partial';
+                        }
+                        $order->save();
+                        
+                        DB::commit();
+                        
+                        return response()->json([
+                            'status' => 'completed',
+                            'message' => 'Pembayaran berhasil',
+                        ]);
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        return response()->json([
+                            'status' => $payment->status,
+                            'message' => 'Error updating payment: ' . $e->getMessage(),
+                        ], 500);
+                    }
+                }
+                
+                return response()->json([
+                    'status' => $payment->status,
+                    'xendit_status' => $xenditStatus,
+                ]);
+            }
+        }
+        
+        return response()->json([
+            'status' => $payment->status,
+        ]);
     }
 
     /**
