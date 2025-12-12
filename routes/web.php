@@ -10,6 +10,15 @@ Route::get('/', function () {
     return view('landing');
 });
 
+
+Route::get('/clear-cache', function () {
+    Artisan::call('optimize:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    return 'Cache cleared';
+});
+
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
