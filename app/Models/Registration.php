@@ -61,7 +61,7 @@ class Registration extends Model
      */
     public function requiresPayment(): bool
     {
-        return in_array($this->account_type, ['SCALE', 'INFINITE']);
+        return in_array($this->account_type, ['CORE', 'SCALE', 'INFINITE']);
     }
 
     /**
@@ -70,8 +70,10 @@ class Registration extends Model
     public static function getPaymentAmount(string $accountType): float
     {
         return match($accountType) {
+            'CORE' => 20000, // Rp 20.000
             'SCALE' => 99000, // Rp 99.000
             'INFINITE' => 499000, // Rp 499.000
+            'FREE_TRIAL' => 0, // Gratis
             default => 0,
         };
     }

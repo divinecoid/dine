@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\v1\AuthController;
 use App\Http\Controllers\v1\BankAccountController;
 use App\Http\Controllers\v1\BrandController;
 use App\Http\Controllers\v1\CategoryController;
 use App\Http\Controllers\v1\MenuController;
 use App\Http\Controllers\v1\OrderController;
 use App\Http\Controllers\v1\StoreController;
+use App\Http\Controllers\v1\TableController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,71 +23,101 @@ use Illuminate\Support\Facades\Route;
 
 // API v1 Routes
 Route::prefix('v1')->group(function () {
-    // Brands Routes
-    Route::prefix('brands')->group(function () {
-        Route::get('/', [BrandController::class, 'index']);
-        Route::post('/', [BrandController::class, 'store']);
-        Route::get('/{brand}', [BrandController::class, 'show']);
-        Route::put('/{brand}', [BrandController::class, 'update']);
-        Route::patch('/{brand}', [BrandController::class, 'update']);
-        Route::delete('/{brand}', [BrandController::class, 'destroy']);
-        Route::post('/{id}/restore', [BrandController::class, 'restore']);
+    // Authentication Routes (Public)
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/register', [AuthController::class, 'register']);
+        
+        // Protected routes (require authentication)
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('/me', [AuthController::class, 'me']);
+            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+        });
     });
 
-    // Stores Routes
-    Route::prefix('stores')->group(function () {
-        Route::get('/', [StoreController::class, 'index']);
-        Route::post('/', [StoreController::class, 'store']);
-        Route::get('/{store}', [StoreController::class, 'show']);
-        Route::put('/{store}', [StoreController::class, 'update']);
-        Route::patch('/{store}', [StoreController::class, 'update']);
-        Route::delete('/{store}', [StoreController::class, 'destroy']);
-        Route::post('/{id}/restore', [StoreController::class, 'restore']);
-        Route::get('/{store}/available-menus', [StoreController::class, 'availableMenus']);
+    // Masterdata Routes (Protected)
+    Route::middleware('auth:sanctum')->prefix('masterdata')->group(function () {
+        // Brands Routes
+        Route::prefix('brands')->group(function () {
+            Route::get('/', [BrandController::class, 'index']);
+            Route::post('/', [BrandController::class, 'store']);
+            Route::get('/{brand}', [BrandController::class, 'show']);
+            Route::put('/{brand}', [BrandController::class, 'update']);
+            Route::patch('/{brand}', [BrandController::class, 'update']);
+            Route::delete('/{brand}', [BrandController::class, 'destroy']);
+            Route::post('/{id}/restore', [BrandController::class, 'restore']);
+        });
+
+        // Stores Routes
+        Route::prefix('stores')->group(function () {
+            Route::get('/', [StoreController::class, 'index']);
+            Route::post('/', [StoreController::class, 'store']);
+            Route::get('/{store}', [StoreController::class, 'show']);
+            Route::put('/{store}', [StoreController::class, 'update']);
+            Route::patch('/{store}', [StoreController::class, 'update']);
+            Route::delete('/{store}', [StoreController::class, 'destroy']);
+            Route::post('/{id}/restore', [StoreController::class, 'restore']);
+            Route::get('/{store}/available-menus', [StoreController::class, 'availableMenus']);
+        });
+
+        // Categories Routes
+        Route::prefix('categories')->group(function () {
+            Route::get('/', [CategoryController::class, 'index']);
+            Route::post('/', [CategoryController::class, 'store']);
+            Route::get('/{category}', [CategoryController::class, 'show']);
+            Route::put('/{category}', [CategoryController::class, 'update']);
+            Route::patch('/{category}', [CategoryController::class, 'update']);
+            Route::delete('/{category}', [CategoryController::class, 'destroy']);
+            Route::post('/{id}/restore', [CategoryController::class, 'restore']);
+        });
+
+        // Menus Routes
+        Route::prefix('menus')->group(function () {
+            Route::get('/', [MenuController::class, 'index']);
+            Route::post('/', [MenuController::class, 'store']);
+            Route::get('/{menu}', [MenuController::class, 'show']);
+            Route::put('/{menu}', [MenuController::class, 'update']);
+            Route::patch('/{menu}', [MenuController::class, 'update']);
+            Route::delete('/{menu}', [MenuController::class, 'destroy']);
+            Route::post('/{id}/restore', [MenuController::class, 'restore']);
+            Route::get('/{menu}/available-stores', [MenuController::class, 'availableStores']);
+            Route::get('/{menu}/stores/{store}/check-availability', [MenuController::class, 'checkAvailability']);
+            Route::put('/{menu}/stores/{store}/availability', [MenuController::class, 'updateStoreAvailability']);
+            Route::patch('/{menu}/stores/{store}/availability', [MenuController::class, 'updateStoreAvailability']);
+        });
+
+        // Bank Accounts Routes
+        Route::prefix('bank-accounts')->group(function () {
+            Route::get('/', [BankAccountController::class, 'index']);
+            Route::post('/', [BankAccountController::class, 'store']);
+            Route::get('/{bankAccount}', [BankAccountController::class, 'show']);
+            Route::put('/{bankAccount}', [BankAccountController::class, 'update']);
+            Route::patch('/{bankAccount}', [BankAccountController::class, 'update']);
+            Route::delete('/{bankAccount}', [BankAccountController::class, 'destroy']);
+            Route::post('/{id}/restore', [BankAccountController::class, 'restore']);
+            Route::get('/{bankAccount}/balance', [BankAccountController::class, 'getBalance']);
+            Route::post('/{bankAccount}/balance', [BankAccountController::class, 'updateBalance']);
+            Route::put('/{bankAccount}/balance', [BankAccountController::class, 'updateBalance']);
+        });
+
+        // Tables Routes
+        Route::prefix('tables')->group(function () {
+            Route::get('/', [TableController::class, 'index']);
+            Route::post('/', [TableController::class, 'store']);
+            Route::get('/{table}', [TableController::class, 'show']);
+            Route::put('/{table}', [TableController::class, 'update']);
+            Route::patch('/{table}', [TableController::class, 'update']);
+            Route::delete('/{table}', [TableController::class, 'destroy']);
+            Route::post('/{id}/restore', [TableController::class, 'restore']);
+            Route::get('/{table}/can-close', [TableController::class, 'canClose']);
+            Route::post('/{table}/close-orders', [TableController::class, 'closeOrders']);
+            Route::get('/{table}/orders', [TableController::class, 'orders']);
+        });
     });
 
-    // Categories Routes
-    Route::prefix('categories')->group(function () {
-        Route::get('/', [CategoryController::class, 'index']);
-        Route::post('/', [CategoryController::class, 'store']);
-        Route::get('/{category}', [CategoryController::class, 'show']);
-        Route::put('/{category}', [CategoryController::class, 'update']);
-        Route::patch('/{category}', [CategoryController::class, 'update']);
-        Route::delete('/{category}', [CategoryController::class, 'destroy']);
-        Route::post('/{id}/restore', [CategoryController::class, 'restore']);
-    });
-
-    // Menus Routes
-    Route::prefix('menus')->group(function () {
-        Route::get('/', [MenuController::class, 'index']);
-        Route::post('/', [MenuController::class, 'store']);
-        Route::get('/{menu}', [MenuController::class, 'show']);
-        Route::put('/{menu}', [MenuController::class, 'update']);
-        Route::patch('/{menu}', [MenuController::class, 'update']);
-        Route::delete('/{menu}', [MenuController::class, 'destroy']);
-        Route::post('/{id}/restore', [MenuController::class, 'restore']);
-        Route::get('/{menu}/available-stores', [MenuController::class, 'availableStores']);
-        Route::get('/{menu}/stores/{store}/check-availability', [MenuController::class, 'checkAvailability']);
-        Route::put('/{menu}/stores/{store}/availability', [MenuController::class, 'updateStoreAvailability']);
-        Route::patch('/{menu}/stores/{store}/availability', [MenuController::class, 'updateStoreAvailability']);
-    });
-
-    // Bank Accounts Routes
-    Route::prefix('bank-accounts')->group(function () {
-        Route::get('/', [BankAccountController::class, 'index']);
-        Route::post('/', [BankAccountController::class, 'store']);
-        Route::get('/{bankAccount}', [BankAccountController::class, 'show']);
-        Route::put('/{bankAccount}', [BankAccountController::class, 'update']);
-        Route::patch('/{bankAccount}', [BankAccountController::class, 'update']);
-        Route::delete('/{bankAccount}', [BankAccountController::class, 'destroy']);
-        Route::post('/{id}/restore', [BankAccountController::class, 'restore']);
-        Route::get('/{bankAccount}/balance', [BankAccountController::class, 'getBalance']);
-        Route::post('/{bankAccount}/balance', [BankAccountController::class, 'updateBalance']);
-        Route::put('/{bankAccount}/balance', [BankAccountController::class, 'updateBalance']);
-    });
-
-    // Orders Routes
-    Route::prefix('orders')->group(function () {
+    // Orders Routes (Protected)
+    Route::middleware('auth:sanctum')->prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index']);
         Route::post('/', [OrderController::class, 'store']);
         Route::get('/check-incomplete', [OrderController::class, 'checkIncompleteOrder']);

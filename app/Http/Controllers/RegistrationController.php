@@ -41,7 +41,7 @@ class RegistrationController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'phone' => ['required', 'string', 'max:20', 'regex:/^(\+62|62|0)[0-9]{9,12}$/', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'account_type' => ['required', 'in:CORE,SCALE,INFINITE'],
+            'account_type' => ['required', 'in:FREE_TRIAL,CORE,SCALE,INFINITE'],
         ], [
             'phone.regex' => 'Format nomor telepon tidak valid.',
             'phone.unique' => 'Nomor telepon ini sudah terdaftar.',
@@ -189,7 +189,7 @@ class RegistrationController extends Controller
             return redirect()->route('registration.payment', ['registration' => $registration->id]);
         }
 
-        // For CORE, complete registration immediately
+        // For FREE_TRIAL and CORE, complete registration immediately
         return $this->completeRegistration($registration, $request);
     }
 

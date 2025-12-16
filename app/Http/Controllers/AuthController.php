@@ -101,7 +101,7 @@ class AuthController extends Controller
         $package = $request->query('package');
         
         // Validate package parameter
-        $validPackages = ['CORE', 'SCALE', 'INFINITE'];
+        $validPackages = ['FREE_TRIAL', 'CORE', 'SCALE', 'INFINITE'];
         if ($package && in_array(strtoupper($package), $validPackages)) {
             $package = strtoupper($package);
         } else {

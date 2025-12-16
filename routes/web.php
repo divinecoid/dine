@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CatalogueController;
 use App\Http\Controllers\PublicMenuController;
 use App\Http\Controllers\PublicOrderController;
 use Illuminate\Support\Facades\Route;
@@ -99,6 +100,10 @@ Route::prefix('orders')->name('public.orders.')->group(function () {
 Route::get('/order/{orderNumber}', [PublicOrderController::class, 'show'])
     ->where('orderNumber', '[A-Z0-9-]+')
     ->name('public.order');
+
+// Catalogue Routes (Public - No Login Required)
+Route::get('/catalogue', [CatalogueController::class, 'index'])->name('catalogue');
+Route::post('/catalogue/checkout', [CatalogueController::class, 'checkout'])->name('catalogue.checkout');
 
 // Xendit Webhook (no CSRF protection needed)
 Route::post('/webhooks/xendit', [\App\Http\Controllers\XenditWebhookController::class, 'handleWebhook'])

@@ -219,13 +219,10 @@
                                 <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
                                 <h3 class="text-xl font-bold text-[#EDEDEC]">CORE</h3>
                             </div>
-                            <div class="bg-green-500 text-white px-3 py-1.5 rounded-bl-lg rounded-tr-xl text-xs font-bold ml-2 flex-shrink-0">
-                                GRATIS
-                            </div>
                         </div>
                         <p class="text-xs text-[#A1A09A] mb-4 leading-relaxed">Fondasi untuk memulai</p>
                         <div class="mb-5">
-                            <span class="text-3xl font-bold text-[#EDEDEC]">Rp 0</span>
+                            <span class="text-3xl font-bold text-[#EDEDEC]">Rp 20.000</span>
                             <span class="text-sm text-[#A1A09A] ml-1">/ bulan</span>
                         </div>
                     </div>
@@ -295,11 +292,11 @@
                         </div>
                     </div>
 
-                    <p class="text-xs text-[#A1A09A] italic mb-5 leading-relaxed">Cocok untuk: kedai kecil & UMKM yang ingin mulai digitalisasi tanpa biaya.</p>
+                    <p class="text-xs text-[#A1A09A] italic mb-5 leading-relaxed">Cocok untuk: kedai kecil & UMKM yang ingin mulai digitalisasi.</p>
 
                     @if (Route::has('register'))
                         <a href="{{ route('register', ['package' => 'CORE']) }}" class="block w-full text-center px-6 py-3 bg-[#F53003] text-white text-sm font-semibold rounded-xl hover:bg-[#d42800] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#F53003]/20 mt-auto">
-                            Mulai Gratis
+                            Mulai Sekarang
                         </a>
                     @endif
                 </div>

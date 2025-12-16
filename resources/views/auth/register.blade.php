@@ -131,11 +131,22 @@
                             <label class="block text-sm font-medium text-[#EDEDEC] mb-3">Pilih Tipe Akun <span class="text-[#F53003]">*</span></label>
                             <div class="grid grid-cols-1 gap-3">
                                 <label class="package-option relative flex items-center p-5 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-xl cursor-pointer hover:border-[#F53003]/50 transition-all duration-300">
+                                    <input type="radio" name="account_type" value="FREE_TRIAL" required class="sr-only peer" {{ old('account_type') === 'FREE_TRIAL' || (isset($selectedPackage) && $selectedPackage === 'FREE_TRIAL') ? 'checked' : '' }}>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-base font-semibold text-[#EDEDEC]">FREE TRIAL</span>
+                                            <span class="text-sm font-bold text-green-400">GRATIS</span>
+                                        </div>
+                                        <p class="text-xs text-[#A1A09A]">Coba gratis selama 1 minggu</p>
+                                    </div>
+                                </label>
+                                
+                                <label class="package-option relative flex items-center p-5 bg-[#0a0a0a] border-2 border-[#3E3E3A] rounded-xl cursor-pointer hover:border-[#F53003]/50 transition-all duration-300">
                                     <input type="radio" name="account_type" value="CORE" required class="sr-only peer" {{ old('account_type') === 'CORE' || (isset($selectedPackage) && $selectedPackage === 'CORE') ? 'checked' : '' }}>
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between mb-1">
                                             <span class="text-base font-semibold text-[#EDEDEC]">CORE</span>
-                                            <span class="text-sm font-bold text-green-400">GRATIS</span>
+                                            <span class="text-sm font-bold text-[#EDEDEC]">Rp 20.000</span>
                                         </div>
                                         <p class="text-xs text-[#A1A09A]">Paket dasar untuk memulai bisnis Anda</p>
                                     </div>
