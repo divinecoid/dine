@@ -30,16 +30,44 @@
 
         /* Light Theme Override */
         [data-theme="light"] {
-            --bg-main: #ffffff;
-            --bg-sidebar: #f9fafb;
-            --bg-card: #ffffff;
-            --bg-input: #ffffff;
+            --bg-main: #F4F4F5;
+            /* Zinc-100 - Softer, slight grey background */
+            --bg-sidebar: #FFFFFF;
+            /* White sidebar */
+            --bg-card: #FFFFFF;
+            /* White cards */
+            --bg-input: #FFFFFF;
+            /* White inputs */
 
-            --text-main: #0a0a0a;
-            --text-muted: #6b7280;
-            --text-inverse: #ffffff;
+            --text-main: #18181B;
+            /* Zinc-900 - Softer black */
+            --text-muted: #71717A;
+            /* Zinc-500 */
+            --text-inverse: #FFFFFF;
 
-            --border-color: #e5e7eb;
+            --border-color: #E5E7EB;
+            /* Gray-200 */
+        }
+
+        /* Force table headers and body to be white in light mode to match user preference */
+        [data-theme="light"] table,
+        [data-theme="light"] table thead,
+        [data-theme="light"] table tbody,
+        [data-theme="light"] table tr,
+        [data-theme="light"] table th,
+        [data-theme="light"] table td {
+            background-color: #FFFFFF !important;
+        }
+
+        [data-theme="light"] table thead th {
+            border-bottom-color: var(--border-color) !important;
+        }
+
+        /* Force inputs/selects to be white in light mode (overriding the main bg utility class) */
+        [data-theme="light"] input[class*="bg-[#0a0a0a]"],
+        [data-theme="light"] select[class*="bg-[#0a0a0a]"],
+        [data-theme="light"] textarea[class*="bg-[#0a0a0a]"] {
+            background-color: var(--bg-input) !important;
         }
 
         .sidebar-transition {

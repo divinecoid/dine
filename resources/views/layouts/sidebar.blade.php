@@ -163,7 +163,7 @@
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit"
-                class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-[var(--text-main)] bg-[var(--brand-primary)] bg-opacity-20 rounded-lg hover:bg-[var(--brand-primary)] hover:bg-opacity-30 transition-colors">
+                class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-[var(--brand-primary)] rounded-lg hover:bg-[var(--brand-hover)] transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
