@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role',
         'account_type',
         'mdx_store_id',
+        'appearance',
     ];
 
     /**
@@ -102,7 +103,7 @@ class User extends Authenticatable
         } elseif ($this->isStoreManager() && $this->store) {
             return [$this->store->mdx_brand_id];
         }
-        
+
         return [];
     }
 
@@ -117,7 +118,7 @@ class User extends Authenticatable
         } elseif ($this->isStoreManager() && $this->store) {
             return [$this->store->id];
         }
-        
+
         return [];
     }
 
@@ -190,7 +191,7 @@ class User extends Authenticatable
      */
     public function getAccountTypeLabel(): ?string
     {
-        return match($this->account_type) {
+        return match ($this->account_type) {
             'FREE_TRIAL' => 'Free Trial',
             'CORE' => 'Core',
             'SCALE' => 'Scale',
