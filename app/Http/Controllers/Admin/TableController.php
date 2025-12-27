@@ -21,9 +21,9 @@ class TableController extends Controller
         $search = $request->input('search');
         if ($search && trim($search) !== '') {
             $searchTerm = trim($search);
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('table_number', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('table_number', 'like', '%' . $searchTerm . '%');
             });
         }
 
@@ -36,7 +36,7 @@ class TableController extends Controller
         // Store filter
         $storeId = $request->input('store_id');
         if ($storeId && $storeId !== '') {
-            $query->where('mdx_store_id', (int)$storeId);
+            $query->where('mdx_store_id', (int) $storeId);
         }
 
         // Table status filter (available, occupied, etc.)
@@ -100,7 +100,7 @@ class TableController extends Controller
         }
 
         // Handle checkbox
-        $validated['is_active'] = (bool)($request->input('is_active', 0));
+        $validated['is_active'] = (bool) ($request->input('is_active', 0));
 
         // Check if user can access the store
         if (!$this->canAccessStore($validated['mdx_store_id'])) {
@@ -159,7 +159,7 @@ class TableController extends Controller
         }
 
         // Handle checkbox
-        $validated['is_active'] = (bool)($request->input('is_active', 0));
+        $validated['is_active'] = (bool) ($request->input('is_active', 0));
 
         // Check if user can access the store (if store changed)
         if (isset($validated['mdx_store_id']) && $validated['mdx_store_id'] != $table->mdx_store_id) {
@@ -207,6 +207,28 @@ class TableController extends Controller
 
         return redirect()->route('admin.tables.index')
             ->with('success', "Berhasil menutup {$closedCount} pesanan untuk meja ini.");
+    }
+    /**
+     * Print QR code for a table.
+     */
+    public function printQR(Table $table)
+    {
+        // Check access
+        if (!$this->canAccessStore($table->mdx_store_id)) {
+            abort(403, 'Unauthorized access to this table.');
+        }
+
+        $table->load('store.brand');
+
+        // Generate QR URL using public menu route
+        // Pattern: {app_url}/{brand_slug}?table={unique_identifier}
+        $brandSlug = $table->store->brand->slug;
+        $url = route('public.menu', ['brandSlug' => $brandSlug, 'table' => $table->unique_identifier]);
+
+        // Generate QR Code Image URL (using existing pattern)
+        $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($url);
+
+        return view('admin.tables.print-qr', compact('table', 'url', 'qrCodeUrl'));
     }
 }
 

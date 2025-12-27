@@ -55,6 +55,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.role'])->grou
     Route::resource('stores', \App\Http\Controllers\Admin\StoreController::class);
     Route::resource('tables', \App\Http\Controllers\Admin\TableController::class);
     Route::post('tables/{table}/close-orders', [\App\Http\Controllers\Admin\TableController::class, 'closeOrders'])->name('tables.close-orders');
+    Route::get('tables/{table}/print-qr', [\App\Http\Controllers\Admin\TableController::class, 'printQR'])->name('tables.print-qr');
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class);
 
@@ -72,6 +73,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.role'])->grou
     })->name('withdrawals.index');
 
     // Profile & Settings
+    Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/appearance', [\App\Http\Controllers\Admin\ProfileController::class, 'updateAppearance'])->name('profile.appearance.update');
 });
 

@@ -143,32 +143,23 @@
 
     <!-- Sidebar Footer - Sticky -->
     <div class="px-4 py-4 border-t border-[var(--border-color)] bg-[var(--bg-sidebar)] sticky bottom-0 flex-shrink-0">
-        <!-- Theme Toggle -->
-        <div class="flex items-center justify-between mb-4 px-1">
-            <span class="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Appearance</span>
-            <button id="themeToggle"
-                class="relative inline-flex h-6 w-11 items-center rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] transition-colors focus:outline-none">
-                <span class="sr-only">Toggle theme</span>
-                <span id="themeToggleHandle"
-                    class="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-[var(--text-muted)] transition-transform duration-200"></span>
-            </button>
-        </div>
-
-        <div class="flex items-center mb-3">
+        <a href="{{ route('admin.profile.edit') }}"
+            class="flex items-center mb-3 p-2 rounded-lg hover:bg-[var(--bg-main)] transition-colors group">
             <div class="flex-shrink-0">
-                <div class="w-10 h-10 rounded-full bg-[var(--border-color)] flex items-center justify-center">
+                <div
+                    class="w-10 h-10 rounded-full bg-[var(--border-color)] flex items-center justify-center group-hover:bg-[var(--bg-card)] transition-colors">
                     <span
                         class="text-sm font-medium text-[var(--text-main)]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                 </div>
             </div>
-            <div class="ml-3 flex-1">
-                <p class="text-sm font-medium text-[var(--text-main)]">{{ auth()->user()->name }}</p>
-                <p class="text-xs text-[var(--text-muted)]">{{ auth()->user()->email }}</p>
-                <p class="text-xs text-[var(--text-muted)] capitalize">
+            <div class="ml-3 flex-1 overflow-hidden">
+                <p class="text-sm font-medium text-[var(--text-main)] truncate">{{ auth()->user()->name }}</p>
+                <p class="text-xs text-[var(--text-muted)] truncate">{{ auth()->user()->email }}</p>
+                <p class="text-xs text-[var(--text-muted)] capitalize truncate">
                     {{ auth()->user()->role === 'brand_owner' ? 'Pemilik Brand' : 'Store Manager' }}
                 </p>
             </div>
-        </div>
+        </a>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit"
@@ -186,57 +177,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const themeToggle = document.getElementById('themeToggle');
-        const themeToggleHandle = document.getElementById('themeToggleHandle');
         const html = document.documentElement;
-
-        // Initial state
-        if (html.getAttribute('data-theme') === 'light') {
-            themeToggleHandle.classList.remove('translate-x-1');
-            themeToggleHandle.classList.add('translate-x-6');
-            themeToggleHandle.classList.remove('bg-[var(--text-muted)]');
-            themeToggleHandle.classList.add('bg-yellow-400');
-        }
-
-        themeToggle.addEventListener('click', async function () {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-            // Optimistic update
-            html.setAttribute('data-theme', newTheme);
-
-            // Animate toggle
-            if (newTheme === 'light') {
-                themeToggleHandle.classList.remove('translate-x-1');
-                themeToggleHandle.classList.add('translate-x-6');
-                themeToggleHandle.classList.remove('bg-[var(--text-muted)]');
-                themeToggleHandle.classList.add('bg-yellow-400');
-            } else {
-                themeToggleHandle.classList.remove('translate-x-6');
-                themeToggleHandle.classList.add('translate-x-1');
-                themeToggleHandle.classList.remove('bg-yellow-400');
-                themeToggleHandle.classList.add('bg-[var(--text-muted)]');
-            }
-
-            try {
-                const response = await fetch('{{ route("admin.profile.appearance.update") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({ appearance: newTheme })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to update preference');
-                }
-            } catch (error) {
-                console.error('Error updating appearance:', error);
-                // Revert on error
-                html.setAttribute('data-theme', currentTheme);
-                // Revert toggle logic here if strictly needed, but might be jarring
-            }
-        });
+        // Basic sidebar toggle logic (preserved)
+        // Note: Appearance script moved/removed as it's now handled in profile settings
     });
 </script>

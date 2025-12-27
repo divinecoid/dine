@@ -138,6 +138,11 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
                                     </a>
+                                    <a href="{{ route('admin.tables.print-qr', $table) }}" target="_blank" class="text-[#A1A09A] hover:text-[#F53003] transition-colors" title="Print QR">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4h2v-4zm-6 0H6.414a1 1 0 00-.707.293L4 16.586V15h2v-4H4v4zm0 0h2v4h-2v-4z M10 16a2 2 0 11-4 0 2 2 0 014 0z M20 16a2 2 0 11-4 0 2 2 0 014 0zM3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </a>
                                     <form action="{{ route('admin.tables.destroy', $table) }}" method="POST" class="inline" onsubmit="return confirm('Delete this table?');">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="text-[#F53003] hover:text-[#d42800] transition-colors">
