@@ -27,7 +27,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/register', [AuthController::class, 'register']);
-        
+
         // Protected routes (require authentication)
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('/me', [AuthController::class, 'me']);
@@ -114,6 +114,30 @@ Route::prefix('v1')->group(function () {
             Route::post('/{table}/close-orders', [TableController::class, 'closeOrders']);
             Route::get('/{table}/orders', [TableController::class, 'orders']);
         });
+    });
+
+    // Dashboard Route (Protected)
+    Route::middleware('auth:sanctum')->get('/dashboard', [\App\Http\Controllers\v1\DashboardController::class, 'index']);
+
+    // User Routes (Protected)
+    Route::middleware('auth:sanctum')->apiResource('users', \App\Http\Controllers\v1\UserController::class);
+
+    // Profile Routes (Protected)
+    Route::middleware('auth:sanctum')->prefix('profile')->group(function () {
+        Route::put('/', [\App\Http\Controllers\v1\ProfileController::class, 'update']);
+        Route::put('/password', [\App\Http\Controllers\v1\ProfileController::class, 'updatePassword']);
+        Route::put('/appearance', [\App\Http\Controllers\v1\ProfileController::class, 'updateAppearance']);
+    });
+
+    // Feedback Routes (Protected)
+    Route::middleware('auth:sanctum')->apiResource('feedback', \App\Http\Controllers\v1\FeedbackController::class)->except(['update', 'destroy']);
+
+    // Withdrawal Routes (Protected)
+    Route::middleware('auth:sanctum')->prefix('withdrawals')->group(function () {
+        Route::get('/', [\App\Http\Controllers\v1\WithdrawalController::class, 'index']);
+        Route::post('/', [\App\Http\Controllers\v1\WithdrawalController::class, 'store']);
+        Route::get('/{id}', [\App\Http\Controllers\v1\WithdrawalController::class, 'show']);
+        Route::put('/{id}/status', [\App\Http\Controllers\v1\WithdrawalController::class, 'updateStatus']);
     });
 
     // Orders Routes (Protected)
