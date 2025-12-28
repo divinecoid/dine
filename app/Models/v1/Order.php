@@ -142,7 +142,7 @@ class Order extends Model
     {
         $prefix = 'ORD';
         $date = date('Ymd');
-        
+
         // Get last order number for today
         $lastOrder = static::whereDate('created_at', today())
             ->where('order_number', 'like', "{$prefix}-{$date}-%")
@@ -206,13 +206,13 @@ class Order extends Model
     public function calculateTotals(): void
     {
         $subtotal = $this->orderDetails()->sum('subtotal');
-        
+
         $this->subtotal = $subtotal;
-        $this->total_amount = $subtotal 
-            - $this->discount_amount 
-            + $this->tax_amount 
+        $this->total_amount = $subtotal
+            - $this->discount_amount
+            + $this->tax_amount
             + $this->service_charge;
-        
+
         $this->save();
     }
 
@@ -310,6 +310,15 @@ class Order extends Model
     public function scopeClosed($query)
     {
         return $query->whereNotNull('closed_at');
+    }
+
+    /**
+     * Scope a query to filter orders accessible by a user.
+     */
+    public function scopeAccessibleBy($query, $user)
+    {
+        $storeIds = $user->getAccessibleStoreIds();
+        return $query->whereIn('mdx_store_id', $storeIds);
     }
 
     /**

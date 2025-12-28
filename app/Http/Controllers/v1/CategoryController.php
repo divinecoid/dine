@@ -18,6 +18,9 @@ class CategoryController extends Controller
     {
         $query = Category::query()->with('brand');
 
+        // Filter by user access (brand owners see categories under their brands, store managers see their store's brand categories)
+        $query->accessibleBy($request->user());
+
         // Filter by brand_id
         if ($request->has('brand_id')) {
             $query->where('mdx_brand_id', $request->brand_id);

@@ -10,6 +10,7 @@ Dokumentasi lengkap untuk API DINE ERP v1.
 - [Error Handling](#error-handling)
 - [Status Codes](#status-codes)
 - [Authentication Endpoints](#authentication-endpoints)
+- [Dashboard Endpoint](#dashboard-endpoint)
 - [Masterdata Endpoints](#masterdata-endpoints)
   - [Brands](#brands)
   - [Stores](#stores)
@@ -310,6 +311,105 @@ Logout dari semua perangkat.
   "message": "Logout dari semua perangkat berhasil"
 }
 ```
+
+---
+
+## Dashboard Endpoint
+
+### Get Dashboard Statistics
+
+Mendapatkan statistik dan data dashboard yang disesuaikan dengan role dan kepemilikan user.
+
+**Endpoint:** `GET /dashboard`
+
+**Authentication:** Required
+
+**Access Control:**
+- **Brand Owner**: Data mencakup semua brand dan store yang dimiliki
+- **Store Manager**: Data hanya dari store yang di-manage
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "stats": {
+      "total_brands": 2,
+      "total_stores": 5,
+      "total_menus": 50,
+      "total_orders": 1200
+    },
+    "chart": {
+      "labels": ["01 Dec", "02 Dec", "03 Dec", "..."],
+      "values": [15000, 20000, 18000, "..."]
+    },
+    "top_menus": [
+      {
+        "mdx_menu_id": 1,
+        "menu_name": "Nasi Goreng",
+        "total_qty": 150,
+        "total_sales": "2250000.00"
+      },
+      {
+        "mdx_menu_id": 2,
+        "menu_name": "Mie Goreng",
+        "total_qty": 120,
+        "total_sales": "1800000.00"
+      }
+    ],
+    "top_stores": [
+      {
+        "id": 1,
+        "mdx_brand_id": 1,
+        "name": "Store A - Central",
+        "slug": "store-a-central",
+        "description": null,
+        "address": "Jl. Sudirman No. 1",
+        "phone": "02112345678",
+        "email": "storea@example.com",
+        "latitude": "-6.2088",
+        "longitude": "106.8456",
+        "image": null,
+        "is_active": true,
+        "created_at": "2024-01-01T00:00:00.000000Z",
+        "updated_at": "2024-01-01T00:00:00.000000Z",
+        "deleted_at": null,
+        "orders_sum_total_amount": "10000000.00"
+      }
+    ]
+  }
+}
+```
+
+**Response Fields:**
+
+- `stats`: Statistik ringkasan yang difilter berdasarkan akses user
+  - `total_brands`: Jumlah brand yang accessible
+  - `total_stores`: Jumlah store yang accessible
+  - `total_menus`: Jumlah menu yang accessible
+  - `total_orders`: Jumlah order yang accessible
+
+- `chart`: Data grafik penjualan 30 hari terakhir
+  - `labels`: Array tanggal dalam format "DD MMM"
+  - `values`: Array total penjualan per tanggal
+
+- `top_menus`: Top 5 menu terlaris berdasarkan quantity
+  - `mdx_menu_id`: ID menu
+  - `menu_name`: Nama menu
+  - `total_qty`: Total quantity terjual
+  - `total_sales`: Total nilai penjualan dalam Rupiah
+
+- `top_stores`: Top 5 store dengan penjualan tertinggi
+  - Hanya ditampilkan untuk **Brand Owner**
+  - Untuk **Store Manager**: array kosong `[]`
+  - Berisi detail store lengkap dengan `orders_sum_total_amount`
+
+**Notes:**
+1. Semua data sudah difilter sesuai dengan brand/store yang accessible oleh user
+2. Chart menampilkan sales trend dari 30 hari terakhir
+3. Cancelled orders tidak dihitung dalam semua metrics
+4. Top lists dibatasi maksimal 5 items
+5. Data real-time tanpa caching
 
 ---
 
@@ -2125,6 +2225,7 @@ Menghapus item dari order.
 ### v1.0.0 (2024-12-12)
 - Initial API documentation
 - Authentication endpoints
+- Dashboard endpoint with access control
 - Masterdata CRUD endpoints (Brands, Stores, Categories, Menus, Bank Accounts, Tables)
 - Orders endpoints
 

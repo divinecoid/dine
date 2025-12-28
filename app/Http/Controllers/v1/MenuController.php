@@ -20,6 +20,9 @@ class MenuController extends Controller
     {
         $query = Menu::query();
 
+        // Filter by user access (brand owners see menus under their brands' categories, store managers see their store's brand menus)
+        $query->accessibleBy($request->user());
+
         // Filter by is_active
         if ($request->has('is_active')) {
             $query->where('is_active', $request->boolean('is_active'));
@@ -270,9 +273,11 @@ class MenuController extends Controller
             $store->id => $data,
         ]);
 
-        $menu->load(['stores' => function ($query) use ($store) {
-            $query->where('mdx_stores.id', $store->id);
-        }]);
+        $menu->load([
+            'stores' => function ($query) use ($store) {
+                $query->where('mdx_stores.id', $store->id);
+            }
+        ]);
 
         return response()->json([
             'success' => true,
