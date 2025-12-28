@@ -18,6 +18,9 @@ class StoreController extends Controller
     {
         $query = Store::query()->with('brand');
 
+        // Filter by user access (brand owners see stores under their brands, store managers see only their store)
+        $query->accessibleBy($request->user());
+
         // Filter by brand_id
         if ($request->has('brand_id')) {
             $query->where('mdx_brand_id', $request->brand_id);

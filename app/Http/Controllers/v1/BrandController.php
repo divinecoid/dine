@@ -18,6 +18,9 @@ class BrandController extends Controller
     {
         $query = Brand::query();
 
+        // Filter by user access (brand owners see only their brands, store managers see their store's brand)
+        $query->accessibleBy($request->user());
+
         // Filter by is_active if provided
         if ($request->has('is_active')) {
             $query->where('is_active', $request->boolean('is_active'));
